@@ -74,6 +74,15 @@ export const farmQuestions: Question[] = [
     },
 
     {
+        id: "farm_blockCount",
+        section: "farm",
+        field: "farm.blockCount",
+        question: "How many blocks are present in your farm?",
+        type: "number",
+        required : true,
+    },
+
+    {
         id : "farm_photo",
         section : "farm",
         field : "farm.photo",
