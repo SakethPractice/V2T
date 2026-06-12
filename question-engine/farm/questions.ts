@@ -4,7 +4,7 @@ export const farmQuestions: Question[] = [
     {
         id: "farm_name",
         section: "farm",
-        field: "farmr.name",
+        field: "farm.name",
         question: "What is the name of the farm?",
         type: "text",
         required : true,

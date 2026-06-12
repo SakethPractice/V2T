@@ -43,7 +43,7 @@ export const generateBlockQuestions = (
       {
         id: `block_${i}_water_source`,
         section: "block",
-        field: `blocks[${i - 1}].waterSource`,
+        field: `blocks[${i - 1}].watersrc`,
         question: `What is the water source for Block ${i}?`,
         type: "select",
         required: true,
