@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import { initializeInterview } from "../../question-engine/engine/interviewEngine";
 
 import { useInterviewStore } from "../../state/interviewStore";
@@ -7,6 +9,9 @@ import { useInterviewStore } from "../../state/interviewStore";
 import { addBlockQuestions } from "../../question-engine/engine/interviewEngine";
 
 export default function InterviewPage() {
+
+  const navigate = useNavigate();
+
   const {
     questions,
     currentQuestionIndex,
@@ -31,9 +36,11 @@ export default function InterviewPage() {
   setAnswerValue(
     String(getSavedAnswer())
   );
-}, [currentQuestionIndex]);
+}, [currentQuestionIndex,responses]);
 
   const currentQuestion = questions[currentQuestionIndex];
+
+  
 
 const getSavedAnswer = () => {
   if (!currentQuestion) return "";
@@ -73,6 +80,10 @@ const getSavedAnswer = () => {
 };
 
 const handleNext = () => {
+  if (!currentQuestion) {
+    return;
+  }
+
   setAnswer(
     currentQuestion.section,
     currentQuestion.field,
@@ -80,29 +91,35 @@ const handleNext = () => {
   );
 
   if (
-  currentQuestion.field === "farm.blockCount" &&
-  !questions.some(
-    (question) => question.section === "block"
-  )
-) {
-  const updatedQuestions = addBlockQuestions(
-    questions,
-    Number(answer)
-  );
+    currentQuestion.field === "farm.blockCount" &&
+    !questions.some(
+      (question) => question.section === "block"
+    )
+  ) {
+    const updatedQuestions = addBlockQuestions(
+      questions,
+      Number(answer)
+    );
 
-  setQuestions(updatedQuestions);
-}
+    setQuestions(updatedQuestions);
+  }
+
+  if (
+    currentQuestionIndex ===
+    questions.length - 1
+  ) {
+    navigate("/review");
+    return;
+  }
 
   nextQuestion();
 
   setAnswerValue("");
-};
+}; 
 
-  if (questions.length === 0) {
-    return <div>Loading...</div>;
+  if (!currentQuestion) {
+    return <div>Loading interview...</div>;
   }
-
-  
 
   return (
     <div>
@@ -127,14 +144,9 @@ const handleNext = () => {
           Previous
         </button>
 
-        <button
-          onClick={handleNext}
-          disabled={
-            currentQuestionIndex === questions.length - 1
-          }
-        >
-          Next
-        </button>
+        <button onClick={handleNext}>
+  Next
+</button>
       </div>
     </div>
   );
