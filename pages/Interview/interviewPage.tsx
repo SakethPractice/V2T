@@ -4,6 +4,8 @@ import { initializeInterview } from "../../question-engine/engine/interviewEngin
 
 import { useInterviewStore } from "../../state/interviewStore";
 
+import { addBlockQuestions } from "../../question-engine/engine/interviewEngine";
+
 export default function InterviewPage() {
   const {
     questions,
@@ -33,7 +35,7 @@ export default function InterviewPage() {
 
   const currentQuestion = questions[currentQuestionIndex];
 
-  const getSavedAnswer = () => {
+const getSavedAnswer = () => {
   if (!currentQuestion) return "";
 
   const [section, key] =
@@ -55,20 +57,46 @@ export default function InterviewPage() {
     );
   }
 
+  if (section.startsWith("blocks[")) {
+    const blockIndex = Number(
+      section.match(/\d+/)?.[0]
+    );
+
+    return (
+      responses.blocks?.[blockIndex]?.[
+        key as keyof typeof responses.blocks[number]
+      ] ?? ""
+    );
+  }
+
   return "";
 };
 
-  const handleNext = () => {
-    setAnswer(
-      currentQuestion.section,
-      currentQuestion.field,
-      answer
-    );
+const handleNext = () => {
+  setAnswer(
+    currentQuestion.section,
+    currentQuestion.field,
+    answer
+  );
 
-    nextQuestion();
+  if (
+  currentQuestion.field === "farm.blockCount" &&
+  !questions.some(
+    (question) => question.section === "block"
+  )
+) {
+  const updatedQuestions = addBlockQuestions(
+    questions,
+    Number(answer)
+  );
 
-    setAnswerValue("");
-  };
+  setQuestions(updatedQuestions);
+}
+
+  nextQuestion();
+
+  setAnswerValue("");
+};
 
   if (questions.length === 0) {
     return <div>Loading...</div>;

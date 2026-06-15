@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { InterviewStore } from "../types/interviewStore";
+import { InterviewStore } from "../types/interview";
 
 export const useInterviewStore = create<InterviewStore> ((set) => ({
     currentQuestionIndex: 0,
@@ -82,6 +82,38 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
       };
     }
 
+    if (section === "block") {
+  const blockPart = field.split(".")[0];
+
+  const blockIndex = Number(
+    blockPart.match(/\d+/)?.[0]
+  );
+
+  const property = field.split(".")[1];
+
+  const blocks = [
+    ...state.responses.blocks,
+  ];
+
+  blocks[blockIndex] =
+    blocks[blockIndex] ?? {};
+
+  blocks[blockIndex] = {
+    ...blocks[blockIndex],
+
+    [property]: value,
+  };
+
+  return {
+    responses: {
+      ...state.responses,
+
+      blocks,
+    },
+  };
+}
+
+    
     return {};
   }),
         
