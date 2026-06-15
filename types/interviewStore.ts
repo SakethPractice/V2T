@@ -1,4 +1,4 @@
-import { Question } from "./questions"
+import { Question, QuestionSection } from "./questions"
 import { InterviewResponses } from "./response";
 
 export interface InterviewStore {
@@ -11,7 +11,7 @@ export interface InterviewStore {
   setQuestions: (questions: Question[]) => void;
 
   setAnswer: (
-    section: "farmer" | "farm" | "block",
+    section: QuestionSection,
     field: string,
     value: unknown,
     blockIndex?: number

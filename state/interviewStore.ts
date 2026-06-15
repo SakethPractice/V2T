@@ -45,9 +45,45 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
         },
     }),
 
-    setAnswer: () => {
-        //todo
-    },
+    
+    setAnswer: (
+  section,
+  field,
+  value
+) =>
+  set((state) => {
+    const key = field.split(".")[1];
+
+    if (section === "farmer") {
+      return {
+        responses: {
+          ...state.responses,
+
+          farmer: {
+            ...state.responses.farmer,
+
+            [key]: value,
+          },
+        },
+      };
+    }
+
+    if (section === "farm") {
+      return {
+        responses: {
+          ...state.responses,
+
+          farm: {
+            ...state.responses.farm,
+
+            [key]: value,
+          },
+        },
+      };
+    }
+
+    return {};
+  }),
         
     
 }));
