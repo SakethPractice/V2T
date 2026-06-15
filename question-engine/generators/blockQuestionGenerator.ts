@@ -14,6 +14,8 @@ export const generateBlockQuestions = (
         question: `What is the name of Block ${i}?`,
         type: "text",
         required: true,
+        minLength : 1,
+
       },
 
       {
@@ -23,6 +25,7 @@ export const generateBlockQuestions = (
         question: `What is the area of Block ${i}?`,
         type: "number",
         required: true,
+        min : 0.5,
       },
 
       {

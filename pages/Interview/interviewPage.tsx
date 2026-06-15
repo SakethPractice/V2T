@@ -8,6 +8,8 @@ import { useInterviewStore } from "../../state/interviewStore";
 
 import { addBlockQuestions } from "../../question-engine/engine/interviewEngine";
 
+import { validateAnswer } from "../../question-engine/validator/validator";
+
 export default function InterviewPage() {
 
   const navigate = useNavigate();
@@ -25,6 +27,8 @@ export default function InterviewPage() {
   console.log(responses);
 
   const [answer, setAnswerValue] = useState("");
+
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const interviewQuestions = initializeInterview();
@@ -84,6 +88,18 @@ const handleNext = () => {
     return;
   }
 
+  const validationError = validateAnswer(
+    currentQuestion,
+    answer
+  );
+
+  if (validationError) {
+    setError(validationError);
+    return;
+  }
+
+  setError("");
+
   setAnswer(
     currentQuestion.section,
     currentQuestion.field,
@@ -122,32 +138,73 @@ const handleNext = () => {
   }
 
   return (
-    <div>
-      <h2>
+  <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
+
+      <h2 className="text-center text-gray-500 mb-4">
         Question {currentQuestionIndex + 1} of {questions.length}
       </h2>
 
-      <h3>{currentQuestion.question}</h3>
+      <h3 className="text-2xl font-semibold text-center mb-8">
+        {currentQuestion.question}
+      </h3>
 
       <input
         key={currentQuestion.id}
         type="text"
         value={answer}
         onChange={(e) => setAnswerValue(e.target.value)}
+        className="
+          w-full
+          border
+          border-gray-300
+          rounded-lg
+          px-4
+          py-3
+          text-center
+          focus:outline-none
+          focus:ring-2
+          focus:ring-blue-500
+        "
       />
 
-      <div>
+      {error && (
+        <p className="text-red-500 text-center mt-3">
+          {error}
+        </p>
+      )}
+
+      <div className="flex justify-between mt-8">
         <button
           onClick={previousQuestion}
           disabled={currentQuestionIndex === 0}
+          className="
+            px-6
+            py-3
+            bg-gray-200
+            rounded-lg
+            hover:bg-gray-300
+            disabled:opacity-50
+            disabled:cursor-not-allowed
+          "
         >
           Previous
         </button>
 
-        <button onClick={handleNext}>
-  Next
-</button>
+        <button
+          onClick={handleNext}
+          className="
+            px-6
+            py-3
+            bg-blue-600
+            text-white
+            rounded-lg
+            hover:bg-blue-700
+          "
+        >
+          Next
+        </button>
       </div>
     </div>
-  );
-}
+  </div>
+)};

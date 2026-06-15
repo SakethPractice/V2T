@@ -8,6 +8,7 @@ export const farmQuestions: Question[] = [
         question: "What is the name of the farm?",
         type: "text",
         required : true,
+        minLength : 1,
     },
 
     {
@@ -17,6 +18,7 @@ export const farmQuestions: Question[] = [
         question: "Where is the farm?",
         type: "text",
         required : true,
+        minLength : 4,
     },
 
     {
@@ -26,6 +28,7 @@ export const farmQuestions: Question[] = [
         question: "How big is your farm?",
         type: "number",
         required : true,
+        min: 0.5,
     },
 
     {
@@ -80,6 +83,8 @@ export const farmQuestions: Question[] = [
         question: "How many blocks are present in your farm?",
         type: "number",
         required : true,
+        min : 1,
+        max : 20,
     },
 
     {

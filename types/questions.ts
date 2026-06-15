@@ -20,4 +20,12 @@ export interface Question {
   required: boolean;
 
   options?: string[];
+
+  min?: number;
+  max?: number;
+
+  minLength?: number;
+  maxLength?: number;
+
+  pattern?: RegExp;
 }

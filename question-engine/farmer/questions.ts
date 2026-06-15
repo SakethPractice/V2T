@@ -8,6 +8,7 @@ export const farmerQuestions: Question[] = [
         question: "What is your full name?",
         type: "text",
         required : true,
+        minLength : 1,
     },
 
     {
@@ -17,6 +18,7 @@ export const farmerQuestions: Question[] = [
         question: "What is your date of birth?",
         type: "date",
         required : true,
+
     },
     
     {
@@ -34,8 +36,11 @@ export const farmerQuestions: Question[] = [
         section: "farmer",
         field: "farmer.mobile_num",
         question: "What is your mobile number?",
-        type: "number",
+        type: "text",
         required : true,
+        minLength : 10,
+        maxLength : 10,
+        pattern: /^[6-9]\d{9}$/, 
     },
 
     {
@@ -45,6 +50,7 @@ export const farmerQuestions: Question[] = [
         question: "Which village do you live in?",
         type: "text",
         required : true,
+        minLength : 2,
     },
 
     {
@@ -52,8 +58,11 @@ export const farmerQuestions: Question[] = [
         section: "farmer",
         field: "farmer.pincode",
         question: "What is your village pincode?",
-        type: "number",
+        type: "text",
         required : true,
+        minLength : 6,
+        maxLength : 6,
+        pattern : /^[1-9][0-9]{5}$/,
     },
 
     {
