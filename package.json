@@ -1,7 +1,7 @@
 {
   "name": "v2t",
   "version": "1.0.0",
-  "description": "Interview question engine",
+  "description": "Automated Interview System",
   "type": "module",
   "scripts": {
     "dev": "vite",
