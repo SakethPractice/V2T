@@ -1,4 +1,4 @@
-import { useInterviewStore } from "../../state/interviewStore";
+import { useInterviewStore } from "../state/interviewStore";
 
 export default function ReviewPage() {
   const { responses } = useInterviewStore();

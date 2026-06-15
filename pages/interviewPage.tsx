@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
-import { initializeInterview } from "../../question-engine/engine/interviewEngine";
+import { initializeInterview } from "../question-engine/engine/interviewEngine";
 
-import { useInterviewStore } from "../../state/interviewStore";
+import { useInterviewStore } from "../state/interviewStore";
 
-import { addBlockQuestions } from "../../question-engine/engine/interviewEngine";
+import { addBlockQuestions } from "../question-engine/engine/interviewEngine";
 
-import { validateAnswer } from "../../question-engine/validator/validator";
+import { validateAnswer } from "../question-engine/validator/validator";
 
 export default function InterviewPage() {
 
