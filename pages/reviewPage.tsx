@@ -1,15 +1,26 @@
 import { useNavigate } from "react-router-dom";
 import { useInterviewStore } from "../state/interviewStore";
-
 import ReviewCard from "../components/review/reviewCard";
-import ReviewRow from "../components/review/reviewRow";
+import EditableReviewRow from "../components/review/editableRow";
 
 export default function ReviewPage() {
-  const responses = useInterviewStore(
-    (state) => state.responses
-  );
+  const { responses, questions } = useInterviewStore((state) => ({
+    responses: state.responses,
+    questions: state.questions,
+  }));
 
   const navigate = useNavigate();
+
+  const getQuestionForField = (field: string) => {
+    const normalizedField = field.replace(
+      /^block(\d+)\./,
+      (_, index) => `blocks[${index}].`
+    );
+
+    return questions.find(
+      (question) => question.field === normalizedField
+    );
+  };
 
   return (
     <div className="min-h-screen bg-slate-100 py-10">
@@ -38,109 +49,165 @@ export default function ReviewPage() {
 
         {/* Farmer Details */}
         <ReviewCard title="Farmer Details">
-          <ReviewRow
+          <EditableReviewRow
             label="Name"
             value={responses.farmer.name}
+            section="farmer"
+            field="farmer.name"
+            question={getQuestionForField("farmer.name")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Date of Birth"
             value={responses.farmer.DOB}
+            section="farmer"
+            field="farmer.DOB"
+            question={getQuestionForField("farmer.DOB")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Gender"
             value={responses.farmer.gender}
+            section="farmer"
+            field="farmer.gender"
+            question={getQuestionForField("farmer.gender")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Mobile Number"
             value={responses.farmer.mobile_num}
+            section="farmer"
+            field="farmer.mobile_num"
+            question={getQuestionForField("farmer.mobile_num")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Village"
             value={responses.farmer.village}
+            section="farmer"
+            field="farmer.village"
+            question={getQuestionForField("farmer.village")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Pincode"
             value={responses.farmer.pincode}
+            section="farmer"
+            field="farmer.pincode"
+            question={getQuestionForField("farmer.pincode")}
           />
         </ReviewCard>
 
         {/* Farm Details */}
         <ReviewCard title="Farm Details">
-          <ReviewRow
+          <EditableReviewRow
             label="Farm Name"
             value={responses.farm.name}
+            section="farm"
+            field="farm.name"
+            question={getQuestionForField("farm.name")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Address"
             value={responses.farm.address}
+            section="farm"
+            field="farm.address"
+            question={getQuestionForField("farm.address")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Total Area"
             value={responses.farm.Tarea}
+            section="farm"
+            field="farm.Tarea"
+            question={getQuestionForField("farm.Tarea")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Used Area"
             value={responses.farm.Uarea}
+            section="farm"
+            field="farm.Uarea"
+            question={getQuestionForField("farm.Uarea")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Unit"
             value={responses.farm.unit}
+            section="farm"
+            field="farm.unit"
+            question={getQuestionForField("farm.unit")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Farm Type"
             value={responses.farm.type}
+            section="farm"
+            field="farm.type"
+            question={getQuestionForField("farm.type")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Water Source"
             value={responses.farm.watersrc}
+            section="farm"
+            field="farm.watersrc"
+            question={getQuestionForField("farm.watersrc")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Soil Type"
             value={responses.farm.soil}
+            section="farm"
+            field="farm.soil"
+            question={getQuestionForField("farm.soil")}
           />
 
-          <ReviewRow
+          <EditableReviewRow
             label="Block Count"
             value={responses.farm.blockCount}
+            section="farm"
+            field="farm.blockCount"
+            question={getQuestionForField("farm.blockCount")}
           />
         </ReviewCard>
 
-        {/* Blocks */}
-        {responses.blocks.map((block, index) => (
+{responses.blocks.map((block, index) => (
   <ReviewCard
     key={index}
     title={`Block ${index + 1}`}
   >
-    <ReviewRow
+    <EditableReviewRow
       label="Name"
       value={block.name}
+      section="block"
+      field={`block${index}.name`}
+      question={getQuestionForField(`block${index}.name`)}
     />
 
-    <ReviewRow
+    <EditableReviewRow
       label="Area"
       value={block.area}
+      section="block"
+      field={`block${index}.area`}
+      question={getQuestionForField(`block${index}.area`)}
     />
 
-    <ReviewRow
+    <EditableReviewRow
       label="Farming Type"
       value={block.farmingType}
+      section="block"
+      field={`block${index}.farmingType`}
+      question={getQuestionForField(`block${index}.farmingType`)}
     />
 
-    <ReviewRow
+    <EditableReviewRow
       label="Water Source"
       value={block.watersrc}
+      section="block"
+      field={`block${index}.watersrc`}
+      question={getQuestionForField(`block${index}.watersrc`)}
     />
   </ReviewCard>
 ))}
