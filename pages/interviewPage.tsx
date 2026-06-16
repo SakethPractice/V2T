@@ -8,38 +8,11 @@ import { useInterviewStore } from "../state/interviewStore";
 
 import { addBlockQuestions } from "../question-engine/engine/interviewEngine";
 
-import { validateAnswer } from "../question-engine/validator/validator";
-
-const DATE_MASK_MAX_LENGTH = 10;
-
-const formatDateInput = (value: string) => {
-  const digits = value.replace(/\D/g, "").slice(0, 8);
-
-  if (digits.length <= 2) {
-    return digits;
-  }
-
-  if (digits.length <= 4) {
-    return `${digits.slice(0, 2)}/${digits.slice(2)}`;
-  }
-
-  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
-};
-
-const sanitizeAnswer = (field: string, value: string) => {
-  switch (field) {
-    case "farmer.name":
-      return value.replace(/[^a-zA-Z\s.'-]/g, "");
-    case "farmer.mobile_num":
-      return value.replace(/\D/g, "").slice(0, 10);
-    case "farmer.pincode":
-      return value.replace(/\D/g, "").slice(0, 6);
-    case "farmer.DOB":
-      return formatDateInput(value).slice(0, DATE_MASK_MAX_LENGTH);
-    default:
-      return value;
-  }
-};
+import {
+  DATE_MASK_MAX_LENGTH,
+  sanitizeAnswer,
+  validateAnswer,
+} from "../utils/validator";
 
 export default function InterviewPage() {
 
