@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +9,37 @@ import { useInterviewStore } from "../state/interviewStore";
 import { addBlockQuestions } from "../question-engine/engine/interviewEngine";
 
 import { validateAnswer } from "../question-engine/validator/validator";
+
+const DATE_MASK_MAX_LENGTH = 10;
+
+const formatDateInput = (value: string) => {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+
+  if (digits.length <= 2) {
+    return digits;
+  }
+
+  if (digits.length <= 4) {
+    return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  }
+
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+};
+
+const sanitizeAnswer = (field: string, value: string) => {
+  switch (field) {
+    case "farmer.name":
+      return value.replace(/[^a-zA-Z\s.'-]/g, "");
+    case "farmer.mobile_num":
+      return value.replace(/\D/g, "").slice(0, 10);
+    case "farmer.pincode":
+      return value.replace(/\D/g, "").slice(0, 6);
+    case "farmer.DOB":
+      return formatDateInput(value).slice(0, DATE_MASK_MAX_LENGTH);
+    default:
+      return value;
+  }
+};
 
 export default function InterviewPage() {
 
@@ -43,8 +74,6 @@ export default function InterviewPage() {
 }, [currentQuestionIndex,responses]);
 
   const currentQuestion = questions[currentQuestionIndex];
-
-  
 
 const getSavedAnswer = () => {
   if (!currentQuestion) return "";
@@ -82,6 +111,213 @@ const getSavedAnswer = () => {
 
   return "";
 };
+
+  const isGenderQuestion =
+    currentQuestion?.field === "farmer.gender";
+
+  const currentAnswer = useMemo(() => {
+    if (currentQuestion?.type === "number" && answer === "") {
+      return "";
+    }
+
+    return String(answer ?? "");
+  }, [answer, currentQuestion?.type]);
+
+  const handleTextChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (!currentQuestion) {
+      return;
+    }
+
+    setAnswerValue(
+      sanitizeAnswer(
+        currentQuestion.field,
+        event.target.value
+      )
+    );
+  };
+
+  const handleSelectChange = (
+    event: ChangeEvent<HTMLSelectElement>
+  ) => {
+    setAnswerValue(event.target.value);
+  };
+
+  const handleImageChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      setAnswerValue("");
+      return;
+    }
+
+    setAnswerValue(file.name);
+  };
+
+  const renderAnswerInput = () => {
+    if (!currentQuestion) {
+      return null;
+    }
+
+    if (currentQuestion.type === "select" && currentQuestion.options) {
+      if (isGenderQuestion) {
+        return (
+          <div className="grid gap-3 sm:grid-cols-3">
+            {currentQuestion.options.map((option) => {
+              const checked = currentAnswer === option;
+
+              return (
+                <label
+                  key={option}
+                  className={`flex items-center gap-3 rounded-xl border px-4 py-3 transition-colors ${
+                    checked
+                      ? "border-blue-600 bg-blue-50"
+                      : "border-slate-300 bg-white"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() =>
+                      setAnswerValue(checked ? "" : option)
+                    }
+                    className="h-4 w-4 accent-blue-600"
+                  />
+
+                  <span className="text-slate-700">
+                    {option}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        );
+      }
+
+      return (
+        <select
+          key={currentQuestion.id}
+          value={currentAnswer}
+          onChange={handleSelectChange}
+          className="
+            w-full
+            border
+            border-slate-300
+            rounded-xl
+            px-4
+            py-3
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500
+          "
+        >
+          <option value="">Select an option</option>
+
+          {currentQuestion.options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
+    if (currentQuestion.type === "image") {
+      return (
+        <div className="space-y-3">
+          <input
+            key={currentQuestion.id}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleImageChange}
+            className="
+              w-full
+              border
+              border-slate-300
+              rounded-xl
+              px-4
+              py-3
+              file:mr-4
+              file:rounded-lg
+              file:border-0
+              file:bg-blue-50
+              file:px-4
+              file:py-2
+              file:text-blue-700
+            "
+          />
+
+          {currentAnswer && (
+            <p className="text-sm text-slate-500">
+              Selected image: {currentAnswer}
+            </p>
+          )}
+        </div>
+      );
+    }
+
+    const isDateQuestion =
+      currentQuestion.type === "date";
+
+    const isNumberQuestion =
+      currentQuestion.type === "number";
+
+    const placeholderMap: Record<string, string> = {
+      "farmer.name": "Enter full name",
+      "farmer.DOB": "dd/mm/yyyy",
+      "farmer.mobile_num": "10-digit mobile number",
+      "farmer.pincode": "6-digit pincode",
+    };
+
+    return (
+      <input
+        key={currentQuestion.id}
+        type={isNumberQuestion ? "number" : "text"}
+        value={currentAnswer}
+        onChange={handleTextChange}
+        placeholder={
+          placeholderMap[currentQuestion.field] ??
+          "Type your answer"
+        }
+        inputMode={
+          isDateQuestion
+            ? "numeric"
+            : currentQuestion.field === "farmer.mobile_num" ||
+                currentQuestion.field === "farmer.pincode" ||
+                isNumberQuestion
+              ? "numeric"
+              : "text"
+        }
+        maxLength={
+          isDateQuestion
+            ? DATE_MASK_MAX_LENGTH
+            : currentQuestion.field === "farmer.mobile_num"
+              ? 10
+              : currentQuestion.field === "farmer.pincode"
+                ? 6
+                : currentQuestion.maxLength
+        }
+        min={isNumberQuestion ? currentQuestion.min : undefined}
+        max={isNumberQuestion ? currentQuestion.max : undefined}
+        step={isNumberQuestion ? "any" : undefined}
+        className="
+          w-full
+          border
+          border-slate-300
+          rounded-xl
+          px-4
+          py-3
+          focus:outline-none
+          focus:ring-2
+          focus:ring-blue-500
+        "
+      />
+    );
+  };
 
 const handleNext = () => {
   if (!currentQuestion) {
@@ -183,23 +419,7 @@ return (
           Your Answer
         </h3>
 
-        <input
-          key={currentQuestion.id}
-          type="text"
-          value={answer}
-          onChange={(e) => setAnswerValue(e.target.value)}
-          className="
-            w-full
-            border
-            border-slate-300
-            rounded-xl
-            px-4
-            py-3
-            focus:outline-none
-            focus:ring-2
-            focus:ring-blue-500
-          "
-        />
+        {renderAnswerInput()}
 
         {error && (
           <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
