@@ -1,38 +1,183 @@
+import { useNavigate } from "react-router-dom";
 import { useInterviewStore } from "../state/interviewStore";
 
+import ReviewCard from "../components/review/reviewCard";
+import ReviewRow from "../components/review/reviewRow";
+
 export default function ReviewPage() {
-  const { responses } = useInterviewStore();
+  const responses = useInterviewStore(
+    (state) => state.responses
+  );
 
-  console.log(responses);
+  const navigate = useNavigate();
 
-    return (
-  <div>
-    <h1>Review Page</h1>
+  return (
+    <div className="min-h-screen bg-slate-100 py-10">
+      <div className="max-w-4xl mx-auto px-6">
 
-    <h2>Farmer Information</h2>
+        {/* Header */}
+        <div
+          className="
+            bg-white
+            rounded-3xl
+            border
+            border-slate-200
+            shadow-sm
+            p-8
+            mb-8
+          "
+        >
+          <h1 className="text-4xl font-bold text-slate-900">
+            Review Your Interview
+          </h1>
 
-    <p>Name: {responses.farmer.name}</p>
-    <p>DOB: {responses.farmer.DOB}</p>
-    <p>Gender: {responses.farmer.gender}</p>
-    <p>Mobile: {responses.farmer.mobile_num}</p>
-    <p>Village: {responses.farmer.village}</p>
-    <p>Pincode: {responses.farmer.pincode}</p>
-  
-  <div>
-        <h2>Farm Information</h2>
-        <p>Farm Name : {responses.farm.name}</p>
-        <p>Farm Tarea : {responses.farm.Tarea}</p>
-        <p>Farm Uarea : {responses.farm.Uarea}</p>
-        <p>Farm unit : {responses.farm.unit}</p>
-        <p>Farm Block count : {responses.farm.blockCount}</p>
-        <p>Farm soil : {responses.farm.soil}</p>
-        <p>Farm add : {responses.farm.address}</p>
-        <p>Farm type : {responses.farm.type}</p>
-        <p>Farm watersrc : {responses.farm.watersrc}</p>
-        <p>Farm photo : {responses.farm.photo}</p>
-  </div>
+          <p className="text-slate-500 mt-3">
+            Verify your information before submission
+          </p>
+        </div>
 
-  </div>
-);
+        {/* Farmer Details */}
+        <ReviewCard title="Farmer Details">
+          <ReviewRow
+            label="Name"
+            value={responses.farmer.name}
+          />
 
+          <ReviewRow
+            label="Date of Birth"
+            value={responses.farmer.DOB}
+          />
+
+          <ReviewRow
+            label="Gender"
+            value={responses.farmer.gender}
+          />
+
+          <ReviewRow
+            label="Mobile Number"
+            value={responses.farmer.mobile_num}
+          />
+
+          <ReviewRow
+            label="Village"
+            value={responses.farmer.village}
+          />
+
+          <ReviewRow
+            label="Pincode"
+            value={responses.farmer.pincode}
+          />
+        </ReviewCard>
+
+        {/* Farm Details */}
+        <ReviewCard title="Farm Details">
+          <ReviewRow
+            label="Farm Name"
+            value={responses.farm.name}
+          />
+
+          <ReviewRow
+            label="Address"
+            value={responses.farm.address}
+          />
+
+          <ReviewRow
+            label="Total Area"
+            value={responses.farm.Tarea}
+          />
+
+          <ReviewRow
+            label="Used Area"
+            value={responses.farm.Uarea}
+          />
+
+          <ReviewRow
+            label="Unit"
+            value={responses.farm.unit}
+          />
+
+          <ReviewRow
+            label="Farm Type"
+            value={responses.farm.type}
+          />
+
+          <ReviewRow
+            label="Water Source"
+            value={responses.farm.watersrc}
+          />
+
+          <ReviewRow
+            label="Soil Type"
+            value={responses.farm.soil}
+          />
+
+          <ReviewRow
+            label="Block Count"
+            value={responses.farm.blockCount}
+          />
+        </ReviewCard>
+
+        {/* Blocks */}
+        {responses.blocks.map((block, index) => (
+  <ReviewCard
+    key={index}
+    title={`Block ${index + 1}`}
+  >
+    <ReviewRow
+      label="Name"
+      value={block.name}
+    />
+
+    <ReviewRow
+      label="Area"
+      value={block.area}
+    />
+
+    <ReviewRow
+      label="Farming Type"
+      value={block.farmingType}
+    />
+
+    <ReviewRow
+      label="Water Source"
+      value={block.watersrc}
+    />
+  </ReviewCard>
+))}
+
+        {/* Navigation */}
+        <div
+          className="
+            bg-white
+            rounded-3xl
+            border
+            border-slate-200
+            shadow-sm
+            p-5
+            mt-8
+            flex
+            justify-between
+          "
+        >
+
+          <button
+            onClick={() => navigate("/preview")}
+            className="
+              px-6
+              py-3
+              rounded-xl
+              bg-blue-600
+              text-white
+              font-medium
+              hover:bg-blue-700
+              transition
+            "
+          >
+            Continue
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
 }
