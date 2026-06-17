@@ -15,8 +15,6 @@ import {
 } from "../utils/validator";
 
 import ProgressSidebar from "../components/interview/progressSidebar";
-import { farmerQuestions } from "../question-engine/farmer/questions";
-import { farmQuestions } from "../question-engine/farm/questions";
 
 export default function InterviewPage() {
 
