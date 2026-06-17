@@ -52,7 +52,7 @@ export const farmerQuestions: Question[] = [
         required : true,
         minLength : 2,
     },
-
+/*
     {
         id: "pincode",
         section: "farmer",
@@ -64,6 +64,7 @@ export const farmerQuestions: Question[] = [
         maxLength : 6,
         pattern : /^[1-9][0-9]{5}$/,
     },
+*/
 
     {
         id : "farmer_photo",

@@ -45,8 +45,9 @@ export const farmQuestions: Question[] = [
         section: "farm",
         field: "farm.unit",
         question: "What is the unit of measurement?",
-        type: "text",
-        required : true,
+        type: "select",
+        required: true,
+        options: ["Hectare", "Acre", "Square Meter", "Square Foot", "Bigha"],
     },
 
     {
@@ -54,8 +55,9 @@ export const farmQuestions: Question[] = [
         section: "farm",
         field: "farm.type",
         question: "What type of farming do you practice?",
-        type: "text",
-        required : true,
+        type: "select",
+        required: true,
+        options: ["Crop", "Horticulture", "Mixed", "Organic"],
     },
 
     {

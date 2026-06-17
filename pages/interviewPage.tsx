@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { initializeInterview } from "../question-engine/engine/interviewEngine";
-
+import { fetchPincode } from "../services/pincodeService";
 import { useInterviewStore } from "../state/interviewStore";
 
 import { addBlockQuestions } from "../question-engine/engine/interviewEngine";
@@ -15,6 +15,8 @@ import {
 } from "../utils/validator";
 
 import ProgressSidebar from "../components/interview/progressSidebar";
+import { farmerQuestions } from "../question-engine/farmer/questions";
+import { farmQuestions } from "../question-engine/farm/questions";
 
 export default function InterviewPage() {
 
@@ -294,7 +296,7 @@ const getSavedAnswer = () => {
     );
   };
 
-const handleNext = () => {
+const handleNext = async () => {
   if (!currentQuestion) {
     return;
   }
@@ -316,6 +318,23 @@ const handleNext = () => {
     currentQuestion.field,
     answer
   );
+
+  if (
+  currentQuestion.field ===
+  "farmer.village"
+) {
+  const pincode =
+    await fetchPincode(answer);
+
+  if (pincode) {
+    setAnswer(
+      "farmer",
+      "farmer.pincode",
+      pincode
+    );
+  }
+}
+
 
   if (
     currentQuestion.field === "farm.blockCount" &&
