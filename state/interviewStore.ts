@@ -32,6 +32,14 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
             currentQuestionIndex: Math.max(0,state.currentQuestionIndex - 1),
         })),
 
+    goToQuestion: (index: number) =>
+        set((state) => ({
+            currentQuestionIndex: Math.max(
+                0,
+                Math.min(index, state.questions.length - 1)
+            ),
+        })),
+
     resetInterview: () =>
     set({
         currentQuestionIndex: 0,

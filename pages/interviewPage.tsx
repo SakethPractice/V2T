@@ -14,6 +14,8 @@ import {
   validateAnswer,
 } from "../utils/validator";
 
+import ProgressSidebar from "../components/interview/progressSidebar";
+
 export default function InterviewPage() {
 
   const navigate = useNavigate();
@@ -345,95 +347,103 @@ const handleNext = () => {
   if (!currentQuestion) {
     return <div>Loading interview...</div>;
   }
-return (
-  <div className="min-h-screen bg-slate-100 py-8 px-4">
-    <div className="max-w-3xl mx-auto">
 
-      {/* Header */}
-      <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
-        <h1 className="text-2xl font-bold">
-          Voice Interview Platform
-        </h1>
+  return (
+    <div className="flex min-h-screen bg-slate-100">
+      {/* Main Content */}
+      <div className="flex-1 py-8 px-4 overflow-y-auto">
+        <div className="max-w-3xl mx-auto">
 
-        <p className="text-slate-500 mt-2">
-          Question {currentQuestionIndex + 1} of {questions.length}
-        </p>
+          {/* Header */}
+          <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
+            <h1 className="text-2xl font-bold">
+              Voice Interview Platform
+            </h1>
 
-        <div className="w-full h-3 bg-slate-200 rounded-full mt-4">
-          <div
-            className="h-3 bg-blue-600 rounded-full transition-all duration-300"
-            style={{
-              width: `${
-                ((currentQuestionIndex + 1) / questions.length) * 100
-              }%`,
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Question Card */}
-      <div className="bg-white rounded-2xl shadow-md p-8 mb-6">
-
-        <div className="mb-4">
-          <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full">
-            {currentQuestion.section}
-          </span>
-        </div>
-
-        <h2 className="text-3xl font-semibold leading-relaxed">
-          {currentQuestion.question}
-        </h2>
-
-      </div>
-
-      {/* Answer Card */}
-      <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
-        <h3 className="text-lg font-medium mb-4">
-          Your Answer
-        </h3>
-
-        {renderAnswerInput()}
-
-        {error && (
-          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600 text-sm">
-              {error}
+            <p className="text-slate-500 mt-2">
+              Question {currentQuestionIndex + 1} of {questions.length}
             </p>
+
+            <div className="w-full h-3 bg-slate-200 rounded-full mt-4">
+              <div
+                className="h-3 bg-blue-600 rounded-full transition-all duration-300"
+                style={{
+                  width: `${
+                    ((currentQuestionIndex + 1) / questions.length) * 100
+                  }%`,
+                }}
+              />
+            </div>
           </div>
-        )}
+
+          {/* Question Card */}
+          <div className="bg-white rounded-2xl shadow-md p-8 mb-6">
+
+            <div className="mb-4">
+              <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full">
+                {currentQuestion.section}
+              </span>
+            </div>
+
+            <h2 className="text-3xl font-semibold leading-relaxed">
+              {currentQuestion.question}
+            </h2>
+
+          </div>
+
+          {/* Answer Card */}
+          <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
+            <h3 className="text-lg font-medium mb-4">
+              Your Answer
+            </h3>
+
+            {renderAnswerInput()}
+
+            {error && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600 text-sm">
+                  {error}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Navigation */}
+          <div className="bg-white rounded-2xl shadow-md p-4 flex justify-between">
+            <button
+              onClick={previousQuestion}
+              disabled={currentQuestionIndex === 0}
+              className="
+                px-6 py-3
+                border border-slate-300
+                rounded-xl
+                hover:bg-slate-100
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+              "
+            >
+              Previous
+            </button>
+
+            <button
+              onClick={handleNext}
+              className="
+                px-6 py-3
+                bg-blue-600
+                text-white
+                rounded-xl
+                hover:bg-blue-700
+              "
+            >
+              Next
+            </button>
+          </div>
+
+        </div>
       </div>
 
-      {/* Navigation */}
-      <div className="bg-white rounded-2xl shadow-md p-4 flex justify-between">
-        <button
-          onClick={previousQuestion}
-          disabled={currentQuestionIndex === 0}
-          className="
-            px-6 py-3
-            border border-slate-300
-            rounded-xl
-            hover:bg-slate-100
-            disabled:opacity-50
-            disabled:cursor-not-allowed
-          "
-        >
-          Previous
-        </button>
-
-        <button
-          onClick={handleNext}
-          className="
-            px-6 py-3
-            bg-blue-600
-            text-white
-            rounded-xl
-            hover:bg-blue-700
-          "
-        >
-          Next
-        </button>
-      </div>
-
+      {/* Progress Sidebar */}
+      <ProgressSidebar />
     </div>
-  </div>
-)};
+  );
+};
