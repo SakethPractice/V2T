@@ -1,0 +1,43 @@
+Farmer questions
+
+Name
+age
+gender
+contact
+village
+pincode
+picture
+DOB
+
+
+Farm questions
+
+Farm Name
+Address
+Farming type
+lat
+long
+Total Area
+Useful Area
+Water Source
+soil type 
+picture
+
+
+Block questions
+
+no of blocks
+block number
+Name of each block
+area of each block
+farming type
+water source in each block
+
+
+
+i18N
+question flow
+user identification - phone +otp
+draft 
+transaction log - sentry
+

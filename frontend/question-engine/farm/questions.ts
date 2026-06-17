@@ -22,16 +22,6 @@ export const farmQuestions: Question[] = [
     },
 
     {
-        id: "farm_area_unit",
-        section: "farm",
-        field: "farm.unit",
-        question: "What is the unit of measurement?",
-        type: "select",
-        required: true,
-        options: ["Hectare", "Acre", "Square Meter", "Square Foot", "Bigha"],
-    },
-
-    {
         id: "farm_Tarea",
         section: "farm",
         field: "farm.Tarea",
@@ -39,7 +29,6 @@ export const farmQuestions: Question[] = [
         type: "number",
         required : true,
         min: 0.5,
-        max: 100,
     },
 
     {
@@ -49,9 +38,17 @@ export const farmQuestions: Question[] = [
         question: "How much is being used?",
         type: "number",
         required : true,
-        max : 100,
     },
 
+    {
+        id: "farm_area_unit",
+        section: "farm",
+        field: "farm.unit",
+        question: "What is the unit of measurement?",
+        type: "select",
+        required: true,
+        options: ["Hectare", "Acre", "Square Meter", "Square Foot", "Bigha"],
+    },
 
     {
         id: "farm_type",

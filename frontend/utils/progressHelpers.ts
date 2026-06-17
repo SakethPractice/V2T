@@ -1,5 +1,5 @@
-import { Question, QuestionSection } from "../types/questions";
-import { InterviewResponses } from "../types/response";
+import { Question, QuestionSection } from "../frontend/types/questions";
+import { InterviewResponses } from "../frontend/types/response";
 
 export interface SectionStatus {
   section: QuestionSection;
