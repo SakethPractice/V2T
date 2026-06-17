@@ -30,6 +30,16 @@ const InterviewSessionSchema = new mongoose.Schema(
       default: "in_progress",
     },
 
+    responses: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {
+        farmer: {},
+        farm: {},
+        block: [],
+      },
+
+    },
+
     lastSavedAt: {
       type: Date,
       default: Date.now,
