@@ -21,5 +21,7 @@ export interface InterviewStore {
 
   previousQuestion: () => void;
 
+  goToQuestion: (index: number) => void;
+
   resetInterview: () => void;
 }
