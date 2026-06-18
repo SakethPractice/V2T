@@ -92,8 +92,6 @@ export const saveAnswer = async (req, res) => {
       });
     }
 
-    session.answers[questionId] = answer;
-
     session.currentQuestionId = currentQuestionId;
 
     session.lastSavedAt = new Date();
@@ -152,6 +150,34 @@ export const saveSession = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to save draft",
+    });
+  }
+};
+
+export const getSession = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+
+    const session = await InterviewSession.findOne({
+      sessionId,
+    });
+
+    if (!session) {
+      return res.status(404).json({
+        message: "Session not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      session,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to load session",
     });
   }
 };

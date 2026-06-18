@@ -19,11 +19,6 @@ const InterviewSessionSchema = new mongoose.Schema(
       default: "",
     },
 
-    answers: {
-      type: mongoose.Schema.Types.Mixed,
-      default: {},
-    },
-
     status: {
       type: String,
       enum: ["in_progress", "completed"],
