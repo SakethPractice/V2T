@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import StartPage from "../pages/startPage";
 import LanguageSelection from "../pages/languageSelection";
 import Instructions from "../pages/instructions";
 import InterviewPage from "../pages/interviewPage";
@@ -11,7 +12,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LanguageSelection />} />
+        <Route path="/" element={<StartPage />} />
+        <Route path="/language" element={<LanguageSelection />} />
         <Route path="/instructions" element={<Instructions />} />
         <Route path="/interview" element={<InterviewPage />} />
         <Route path="/review" element={<ReviewPage />} />

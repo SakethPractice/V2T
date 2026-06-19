@@ -1,10 +1,11 @@
 import { create } from "zustand";
 
 import { InterviewStore } from "../types/interview";
+import { InterviewResponses } from "../types/response";
 
 export const useInterviewStore = create<InterviewStore> ((set) => ({
     currentQuestionIndex: 0,
-
+    sessionId: "",
     questions: [],
 
     responses:
@@ -17,6 +18,16 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
     setQuestions: (questions) => 
         set({
             questions,
+        }),
+
+    setSessionId: (sessionId: string) =>
+        set({
+            sessionId,
+        }),
+
+    setResponses: (responses: InterviewResponses) =>
+        set({
+            responses,
         }),
 
     nextQuestion: () =>
