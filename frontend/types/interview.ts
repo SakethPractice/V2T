@@ -3,6 +3,7 @@ import { InterviewResponses } from "./response";
 
 export interface InterviewStore {
   sessionId: string;
+  phone: string;
   currentQuestionIndex: number;
   questions: Question[];
  
@@ -11,6 +12,8 @@ export interface InterviewStore {
   setQuestions: (questions: Question[]) => void;
 
   setSessionId: (sessionId: string) => void;
+
+  setPhone: (phone: string) => void;
 
   setResponses: (responses: any) => void;
 
