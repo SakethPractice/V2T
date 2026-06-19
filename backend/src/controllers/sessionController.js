@@ -12,11 +12,10 @@ export const startSession = async (req, res) => {
       });
     }
 
-    const existingSession =
-      await InterviewSession.findOne({
-        phone,
-        status: "in_progress",
-      });
+    const existingSession = await InterviewSession.findOne({
+      phone,
+      status: "in_progress",
+    });
 
     if (existingSession) {
       return res.json({
@@ -25,11 +24,10 @@ export const startSession = async (req, res) => {
       });
     }
 
-    const newSession =
-      await InterviewSession.create({
-        sessionId: uuidv4(),
-        phone,
-      });
+    const newSession = await InterviewSession.create({
+      sessionId: uuidv4(),
+      phone,
+    });
 
     return res.status(201).json({
       resume: false,
@@ -48,9 +46,7 @@ export const completeSession = async (req, res) => {
   try {
     const { sessionId } = req.body;
 
-    const session = await InterviewSession.findOne({
-      sessionId,
-    });
+    const session = await InterviewSession.findOne({ sessionId });
 
     if (!session) {
       return res.status(404).json({
@@ -76,16 +72,9 @@ export const completeSession = async (req, res) => {
 
 export const saveAnswer = async (req, res) => {
   try {
-    const {
-      sessionId,
-      questionId,
-      answer,
-      currentQuestionId,
-    } = req.body;
+    const { sessionId, currentQuestionId } = req.body;
 
-    const session = await InterviewSession.findOne({
-      sessionId,
-    });
+    const session = await InterviewSession.findOne({ sessionId });
 
     if (!session) {
       return res.status(404).json({
@@ -94,7 +83,6 @@ export const saveAnswer = async (req, res) => {
     }
 
     session.currentQuestionId = currentQuestionId;
-
     session.lastSavedAt = new Date();
 
     await session.save();
@@ -115,16 +103,9 @@ export const saveAnswer = async (req, res) => {
 
 export const saveSession = async (req, res) => {
   try {
-    const {
-      sessionId,
-      responses,
-      currentQuestionId,
-    } = req.body;
+    const { sessionId, responses, currentQuestionId } = req.body;
 
-    const session =
-      await InterviewSession.findOne({
-        sessionId,
-      });
+    const session = await InterviewSession.findOne({ sessionId });
 
     if (!session) {
       return res.status(404).json({
@@ -132,11 +113,20 @@ export const saveSession = async (req, res) => {
       });
     }
 
-    session.responses = responses;
+    // Normalize the incoming responses so "block" keys never reach Mongo.
+    // Whichever shape arrives, we always persist as { farmer, farm, blocks }.
+    session.responses = {
+      farmer: responses?.farmer ?? {},
+      farm:   responses?.farm   ?? {},
+      blocks: responses?.blocks ?? [],
+    };
 
-    session.currentQuestionId =
-      currentQuestionId;
+    // CRITICAL: responses is a Mixed type in Mongoose.
+    // Without markModified(), Mongoose won't detect nested changes
+    // and the save() call will be a no-op for the responses field.
+    session.markModified("responses");
 
+    session.currentQuestionId = currentQuestionId;
     session.lastSavedAt = new Date();
 
     await session.save();
@@ -159,9 +149,7 @@ export const getSession = async (req, res) => {
   try {
     const { sessionId } = req.params;
 
-    const session = await InterviewSession.findOne({
-      sessionId,
-    });
+    const session = await InterviewSession.findOne({ sessionId });
 
     if (!session) {
       return res.status(404).json({

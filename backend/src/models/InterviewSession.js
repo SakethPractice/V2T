@@ -30,9 +30,8 @@ const InterviewSessionSchema = new mongoose.Schema(
       default: {
         farmer: {},
         farm: {},
-        block: [],
+        blocks: [], // ← was "block", now standardized to "blocks"
       },
-
     },
 
     lastSavedAt: {
