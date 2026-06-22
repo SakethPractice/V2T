@@ -11,3 +11,46 @@ export async function startSession(phone: string) {
 
   return response.json();
 }
+
+export async function saveSession(
+  sessionId: string,
+  responses: object,
+  currentQuestionId: string
+): Promise<void>
+{
+  if(!sessionId) return;
+
+  await fetch(`${API_URL}/save`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId,
+      responses,
+      currentQuestionId,
+    }),
+  });
+}
+
+export async function completeSession(
+  sessionId: string
+) {
+  if (!sessionId) {
+    throw new Error("sessionId is required");
+  }
+
+  const response = await fetch(`${API_URL}/complete`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ sessionId }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to complete session");
+  }
+
+  return response.json();
+}

@@ -22,6 +22,7 @@ export default function StartPage() {
     const result = await startSession(phone);
 
     const store = useInterviewStore.getState();
+    store.resetInterview();
 
     store.setSessionId(
       result.session.sessionId
@@ -31,13 +32,32 @@ export default function StartPage() {
       store.setResponses(
         result.session.responses
       );
+
+      // Restore phone from the saved session so the
+      // mobile_num question is pre-filled on draft resume.
+      store.setPhone(
+        result.session.phone
+      );
+
+      // Tell the interview page which question to jump to.
+      store.setResumeQuestionId(
+        result.session.currentQuestionId
+      );
+
+      setLoading(false);
+      navigate("/interview");
+      return;
+    } else {
+      // Fresh session — store the phone the user just typed.
+      store.setPhone(phone);
     }
 
-    setLoading(true);
+    setLoading(false);
 
     navigate("/language");
   } catch (error) {
     console.error(error);
+    setLoading(false);
   }
 };
 
@@ -67,10 +87,10 @@ export default function StartPage() {
 
       <button
         onClick={handleContinue}
-        disabled={!/^\d{10}$/.test(phone)}
+        disabled={loading || !/^\d{10}$/.test(phone)}
         className="w-full mt-4 bg-green-600 text-white p-3 rounded-lg disabled:bg-gray-300"
       >
-        Continue
+        {loading ? "Loading..." : "Continue"}
       </button>
     </div>
   </div>

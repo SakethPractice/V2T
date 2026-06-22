@@ -1,10 +1,11 @@
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
 import { initializeInterview } from "../question-engine/engine/interviewEngine";
 import { fetchPincode } from "../services/pincodeService";
 import { useInterviewStore } from "../state/interviewStore";
+import { saveSession } from "../services/sessionService";
 
 import { addBlockQuestions } from "../question-engine/engine/interviewEngine";
 
@@ -26,21 +27,42 @@ export default function InterviewPage() {
     setQuestions,
     nextQuestion,
     previousQuestion,
+    goToQuestion,
     setAnswer,
     responses,
+    sessionId,
+    resumeQuestionId,
+    setResumeQuestionId,
   } = useInterviewStore();
-
-  console.log(responses);
 
   const [answer, setAnswerValue] = useState("");
 
   const [error, setError] = useState("");
 
+  const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const initialResumeQuestionId = useRef(resumeQuestionId);
+
   useEffect(() => {
     const interviewQuestions = initializeInterview();
 
     setQuestions(interviewQuestions);
-  }, [setQuestions]);
+
+    if (initialResumeQuestionId.current) {
+      const index = interviewQuestions.findIndex(
+        (q) => q.field === initialResumeQuestionId.current
+      );
+
+      if (index !== -1) {
+        goToQuestion(index);
+      }
+
+      setResumeQuestionId("");
+    }
+  }, [
+    goToQuestion,
+    setQuestions,
+    setResumeQuestionId,
+  ]);
 
   useEffect(() => {
   setAnswerValue(
@@ -48,37 +70,68 @@ export default function InterviewPage() {
   );
 }, [currentQuestionIndex,responses]);
 
+ 
+  // Autosave: fires whenever responses or currentQuestionIndex change.
+  // Debounced by 1000ms so rapid typing doesn't flood the API.
+  // Guards: sessionId must exist, questions must be loaded,
+  // currentQuestion must resolve — prevents saves during initialization.
+  useEffect(() => {
+    const currentQuestion = questions[currentQuestionIndex];
+ 
+    if (!sessionId || !currentQuestion || questions.length === 0) return;
+ 
+    if (autosaveTimer.current) {
+      clearTimeout(autosaveTimer.current);
+    }
+ 
+    autosaveTimer.current = setTimeout(() => {
+      saveSession(
+        sessionId,
+        responses,
+        currentQuestion.field
+      );
+    }, 1000);
+ 
+    // Cancel any pending save if the component unmounts mid-debounce.
+    return () => {
+      if (autosaveTimer.current) {
+        clearTimeout(autosaveTimer.current);
+      }
+    };
+  }, [responses, currentQuestionIndex]);
+ 
+
   const currentQuestion = questions[currentQuestionIndex];
 
 const getSavedAnswer = () => {
   if (!currentQuestion) return "";
+  if (!currentQuestion.field) return "";
 
-  const [section, key] =
-    currentQuestion.field.split(".");
+  const parts = currentQuestion.field.split(".");
+  if (parts.length < 2) return "";
+
+  const section = parts[0];
+  const key = parts[1];
 
   if (section === "farmer") {
     return (
-      responses.farmer[
-        key as keyof typeof responses.farmer
-      ] ?? ""
+      responses?.farmer?.[key as keyof typeof responses.farmer] ?? ""
     );
   }
 
   if (section === "farm") {
     return (
-      responses.farm[
-        key as keyof typeof responses.farm
-      ] ?? ""
+      responses?.farm?.[key as keyof typeof responses.farm] ?? ""
     );
   }
 
-  if (section.startsWith("blocks[")) {
-    const blockIndex = Number(
-      section.match(/\d+/)?.[0]
-    );
+  if (section.startsWith("blocks[") || section.startsWith("block")) {
+    const idx = section.match(/\d+/)?.[0];
+    if (!idx) return "";
+    const blockIndex = Number(idx);
 
     return (
-      responses.blocks?.[blockIndex]?.[
+      responses?.blocks?.[blockIndex]?.[
         key as keyof typeof responses.blocks[number]
       ] ?? ""
     );

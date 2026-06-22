@@ -7,6 +7,7 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
     currentQuestionIndex: 0,
     sessionId: "",
     phone: "",
+    resumeQuestionId:"",
     questions: [],
 
     responses:
@@ -29,6 +30,11 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
     setPhone: (phone: string) =>
         set({
             phone,
+        }),
+
+    setResumeQuestionId: (resumeQuestionId: string) =>
+        set({
+            resumeQuestionId,
         }),
 
     setResponses: (responses: InterviewResponses) =>
@@ -55,10 +61,13 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
 
     goToQuestion: (index: number) =>
         set((state) => ({
-            currentQuestionIndex: Math.max(
-                0,
-                Math.min(index, state.questions.length - 1)
-            ),
+            currentQuestionIndex:
+                state.questions.length === 0
+                    ? Math.max(0, index)
+                    : Math.max(
+                        0,
+                        Math.min(index, state.questions.length - 1)
+                    ),
         })),
 
     resetInterview: () =>
@@ -66,6 +75,8 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
         currentQuestionIndex: 0,
 
         phone:"",
+
+        resumeQuestionId: "",
 
         questions: [],
 

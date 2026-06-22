@@ -5,6 +5,7 @@ export interface InterviewStore {
   sessionId: string;
   phone: string;
   currentQuestionIndex: number;
+  resumeQuestionId: string;
   questions: Question[];
  
   responses: InterviewResponses;
@@ -16,6 +17,8 @@ export interface InterviewStore {
   setPhone: (phone: string) => void;
 
   setResponses: (responses: any) => void;
+
+  setResumeQuestionId: (resumeQuestionId: string) => void;
 
   setAnswer: (
     section: QuestionSection,
