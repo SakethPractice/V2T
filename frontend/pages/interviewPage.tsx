@@ -16,10 +16,13 @@ import {
 } from "../utils/validator";
 
 import ProgressSidebar from "../components/interview/progressSidebar";
+import { useLanguage } from "../hooks/useLanguage";
+import { SupportedLanguage } from "../types/language";
 
 export default function InterviewPage() {
 
   const navigate = useNavigate();
+  const selectedLanguage = useLanguage();
 
   const {
     questions,
@@ -102,6 +105,22 @@ export default function InterviewPage() {
  
 
   const currentQuestion = questions[currentQuestionIndex];
+
+  const getQuestionText = (
+    question: string | Partial<Record<SupportedLanguage, string>> | undefined
+  ) => {
+    if (!question) return "";
+
+    if (typeof question === "string") {
+      return question;
+    }
+
+    return (
+      question[selectedLanguage] ??
+      question.en ??
+      ""
+    );
+  };
 
 const getSavedAnswer = () => {
   if (!currentQuestion) return "";
@@ -456,7 +475,7 @@ const handleNext = async () => {
             </div>
 
             <h2 className="text-3xl font-semibold leading-relaxed">
-              {currentQuestion.question}
+              {getQuestionText(currentQuestion.question)}
             </h2>
 
           </div>

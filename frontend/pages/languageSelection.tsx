@@ -1,14 +1,6 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useInterviewStore } from "../state/interviewStore";
-
-const languages = [
-  { code: "en", label: "English" },
-  { code: "kn", label: "ಕನ್ನಡ" },
-  { code: "te", label: "తెలుగు" },
-  { code: "hi", label: "हिन्दी" },
-  { code: "ta", label: "தமிழ்" },
-];
+import { LANGUAGES } from "../constants/languages";
 
 export default function LanguageSelection() {
   const navigate = useNavigate();
@@ -16,12 +8,15 @@ export default function LanguageSelection() {
     (state) => state.resumeQuestionId
   );
 
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const selectedLanguage = useInterviewStore(
+  (state) => state.selectedLanguage
+);
 
-  const handleContinue = () => {
-    // later:
-    // setLanguage(selectedLanguage);
+  const setLanguage = useInterviewStore(
+  (state) => state.setLanguage
+);  
 
+  const handleContinue = ()=> {
     navigate(
       resumeQuestionId ? "/interview" : "/instructions"
     );
@@ -42,10 +37,10 @@ export default function LanguageSelection() {
         </div>
 
         <div className="space-y-3 mb-8">
-          {languages.map((language) => (
+          {LANGUAGES.map((language) => (
             <button
               key={language.code}
-              onClick={() => setSelectedLanguage(language.code)}
+              onClick={() => setLanguage(language.code)}
               className={`
                 w-full
                 p-4

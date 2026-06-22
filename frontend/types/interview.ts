@@ -1,7 +1,9 @@
 import { Question, QuestionSection } from "./questions"
 import { InterviewResponses } from "./response";
-
+import { SupportedLanguage } from "./language";
 export interface InterviewStore {
+  selectedLanguage: SupportedLanguage;
+
   sessionId: string;
   phone: string;
   currentQuestionIndex: number;
@@ -9,6 +11,8 @@ export interface InterviewStore {
   questions: Question[];
  
   responses: InterviewResponses;
+
+  setLanguage : (language: SupportedLanguage) => void;
 
   setQuestions: (questions: Question[]) => void;
 

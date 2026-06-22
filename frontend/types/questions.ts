@@ -1,3 +1,5 @@
+import { SupportedLanguage } from "./language";
+
 export type QuestionType =
   | "text"
   | "number"
@@ -11,11 +13,15 @@ export type QuestionSection =
   | "block"
   | "review";
 
+export type QuestionText =
+  | string
+  | Partial<Record<SupportedLanguage, string>>;
+
 export interface Question {
   id: string;
   section: QuestionSection;
   field: string;
-  question: string;
+  question: QuestionText;
   type: QuestionType;
   required: boolean;
 
