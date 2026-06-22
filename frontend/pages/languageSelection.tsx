@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useInterviewStore } from "../state/interviewStore";
 
 const languages = [
   { code: "en", label: "English" },
@@ -11,6 +12,9 @@ const languages = [
 
 export default function LanguageSelection() {
   const navigate = useNavigate();
+  const resumeQuestionId = useInterviewStore(
+    (state) => state.resumeQuestionId
+  );
 
   const [selectedLanguage, setSelectedLanguage] = useState("en");
 
@@ -18,7 +22,9 @@ export default function LanguageSelection() {
     // later:
     // setLanguage(selectedLanguage);
 
-    navigate("/instructions");
+    navigate(
+      resumeQuestionId ? "/interview" : "/instructions"
+    );
   };
 
   return (

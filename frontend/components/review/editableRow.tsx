@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pencil, Check, X } from "lucide-react";
 import { Question } from "../../types/questions";
 import { sanitizeAnswer, validateAnswer } from "../../utils/validator";
@@ -13,6 +13,7 @@ interface EditableReviewRowProps {
   field: string;
 
   question?: Question;
+  onSave?: () => void;
 }
 
 export default function EditableReviewRow({
@@ -21,6 +22,7 @@ export default function EditableReviewRow({
   section,
   field,
   question,
+  onSave,
 }: EditableReviewRowProps) {
   const setAnswer = useInterviewStore(
     (state) => state.setAnswer
@@ -34,6 +36,12 @@ export default function EditableReviewRow({
 
   const [error, setError] =
   useState("");
+
+  useEffect(() => {
+    if (!isEditing) {
+      setEditValue(value?.toString() ?? "");
+    }
+  }, [isEditing, value]);
 
   const handleSave = () => {
     const validationError = question
@@ -51,6 +59,7 @@ export default function EditableReviewRow({
       editValue
     );
 
+    onSave?.();
     setError("");
     setIsEditing(false);
   };

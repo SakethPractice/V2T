@@ -6,11 +6,41 @@ import { farmQuestions } from "../farm/questions";
 
 import { generateBlockQuestions } from "../generators/blockQuestionGenerator";
 
+import { useInterviewStore } from "../../state/interviewStore";
+ 
 export const initializeInterview = () : Question[] => {
-    return[
+  
+  // Pre-fill mobile_num from the phone stored at login,
+  // but only if it hasn't already been answered (e.g. from a restored draft).
+  const store = useInterviewStore.getState();
+ 
+  if (
+    store.phone &&
+    !store.responses?.farmer?.mobile_num
+  ) {
+    store.setAnswer(
+      "farmer",
+      "farmer.mobile_num",
+      store.phone
+    );
+  }
+    const baseQuestions = [
         ...farmerQuestions,
         ...farmQuestions,
     ];
+
+    const savedBlockCount = Number(
+      store.responses?.farm?.blockCount ?? 0
+    );
+
+    if (savedBlockCount > 0) {
+      return addBlockQuestions(
+        baseQuestions,
+        savedBlockCount
+      );
+    }
+
+    return baseQuestions;
 };
 
 

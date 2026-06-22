@@ -1,4 +1,4 @@
-import { Question } from "../frontend/types/questions"
+import { Question } from "../types/questions"
 
 export function validateAnswer(
   question: Question,

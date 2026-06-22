@@ -1,10 +1,13 @@
 import { create } from "zustand";
 
 import { InterviewStore } from "../types/interview";
+import { InterviewResponses } from "../types/response";
 
 export const useInterviewStore = create<InterviewStore> ((set) => ({
     currentQuestionIndex: 0,
-
+    sessionId: "",
+    phone: "",
+    resumeQuestionId:"",
     questions: [],
 
     responses:
@@ -18,6 +21,30 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
         set({
             questions,
         }),
+
+    setSessionId: (sessionId: string) =>
+        set({
+            sessionId,
+        }),
+    
+    setPhone: (phone: string) =>
+        set({
+            phone,
+        }),
+
+    setResumeQuestionId: (resumeQuestionId: string) =>
+        set({
+            resumeQuestionId,
+        }),
+
+    setResponses: (responses: InterviewResponses) =>
+      set({
+        responses: {
+          farmer: responses?.farmer ?? {},
+          farm: responses?.farm ?? {},
+          blocks: responses?.blocks ?? [],
+        },
+      }),
 
     nextQuestion: () =>
         set((state) => ({
@@ -34,15 +61,22 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
 
     goToQuestion: (index: number) =>
         set((state) => ({
-            currentQuestionIndex: Math.max(
-                0,
-                Math.min(index, state.questions.length - 1)
-            ),
+            currentQuestionIndex:
+                state.questions.length === 0
+                    ? Math.max(0, index)
+                    : Math.max(
+                        0,
+                        Math.min(index, state.questions.length - 1)
+                    ),
         })),
 
     resetInterview: () =>
     set({
         currentQuestionIndex: 0,
+
+        phone:"",
+
+        resumeQuestionId: "",
 
         questions: [],
 
@@ -60,7 +94,12 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
   value
 ) =>
   set((state) => {
-    const key = field.split(".")[1];
+    if (!field || typeof field !== "string") return {};
+
+    const parts = field.split(".");
+    if (parts.length < 2) return {};
+
+    const key = parts[1];
 
     if (section === "farmer") {
       return {
@@ -68,7 +107,7 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
           ...state.responses,
 
           farmer: {
-            ...state.responses.farmer,
+            ...(state.responses.farmer ?? {}),
 
             [key]: value,
           },
@@ -82,7 +121,7 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
           ...state.responses,
 
           farm: {
-            ...state.responses.farm,
+            ...(state.responses.farm ?? {}),
 
             [key]: value,
           },
@@ -91,37 +130,36 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
     }
 
     if (section === "block") {
-  const blockPart = field.split(".")[0];
+      // support both "blocks[0].name" and "block0.name"
+      const match1 = field.match(/^blocks\[(\d+)\]\.(.+)$/);
+      const match2 = field.match(/^block(\d+)\.(.+)$/);
+      const blockIndex = match1 ? Number(match1[1]) : match2 ? Number(match2[1]) : -1;
+      const property = match1 ? match1[2] : match2 ? match2[2] : key;
 
-  const blockIndex = Number(
-    blockPart.match(/\d+/)?.[0]
-  );
+      if (blockIndex < 0 || Number.isNaN(blockIndex)) return {};
 
-  const property = field.split(".")[1];
+      const blocks = [
+        ...(state.responses.blocks ?? []),
+      ];
 
-  const blocks = [
-    ...state.responses.blocks,
-  ];
+      blocks[blockIndex] =
+        blocks[blockIndex] ?? {};
 
-  blocks[blockIndex] =
-    blocks[blockIndex] ?? {};
+      blocks[blockIndex] = {
+        ...blocks[blockIndex],
 
-  blocks[blockIndex] = {
-    ...blocks[blockIndex],
+        [property]: value,
+      };
 
-    [property]: value,
-  };
+      return {
+        responses: {
+          ...state.responses,
 
-  return {
-    responses: {
-      ...state.responses,
+          blocks,
+        },
+      };
+    }
 
-      blocks,
-    },
-  };
-}
-
-    
     return {};
   }),
         

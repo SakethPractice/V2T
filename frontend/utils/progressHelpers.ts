@@ -1,5 +1,5 @@
-import { Question, QuestionSection } from "../frontend/types/questions";
-import { InterviewResponses } from "../frontend/types/response";
+import { Question, QuestionSection } from "../types/questions";
+import { InterviewResponses } from "../types/response";
 
 export interface SectionStatus {
   section: QuestionSection;
@@ -27,34 +27,52 @@ export const getSectionStatuses = (
     (q) => q.section === "block"
   );
 
+  console.debug("progressHelpers: farmerQuestions:", farmerQuestions.map((q) => q.field));
+  console.debug("progressHelpers: farmQuestions:", farmQuestions.map((q) => q.field));
+
   const isFarmerComplete = farmerQuestions.every((q) => {
+    console.debug("progressHelpers: processing farmer question field:", q.field);
+    if (!q.field || !q.field.includes(".")) {
+      console.warn("progressHelpers: malformed farmer field", q.field);
+      return false;
+    }
     const key = q.field.split(".")[1];
     return (
-      responses.farmer[key as keyof typeof responses.farmer] !==
+      responses?.farmer?.[key as keyof typeof responses.farmer] !==
       undefined
     );
   });
 
   const isFarmComplete = farmQuestions.every((q) => {
+    console.debug("progressHelpers: processing farm question field:", q.field);
+    if (!q.field || !q.field.includes(".")) {
+      console.warn("progressHelpers: malformed farm field", q.field);
+      return false;
+    }
     const key = q.field.split(".")[1];
     return (
-      responses.farm[key as keyof typeof responses.farm] !== undefined
+      responses?.farm?.[key as keyof typeof responses.farm] !== undefined
     );
   });
 
   const isBlocksAvailable =
-    responses.farm?.blockCount &&
-    Number(responses.farm.blockCount) > 0;
+    responses?.farm?.blockCount &&
+    Number(responses?.farm?.blockCount) > 0;
 
   const isBlocksComplete =
     isBlocksAvailable &&
     blockQuestions.every((q) => {
+      console.debug("progressHelpers: processing block question field:", q.field);
+      if (!q.field) {
+        console.warn("progressHelpers: malformed block field (empty)", q.field);
+        return false;
+      }
       const match = q.field.match(/blocks\[(\d+)\]\.(.*)/);
       if (!match) return false;
       const blockIndex = Number(match[1]);
       const property = match[2];
       return (
-        responses.blocks?.[blockIndex]?.[
+        responses?.blocks?.[blockIndex]?.[
           property as keyof typeof responses.blocks[number]
         ] !== undefined
       );
@@ -116,28 +134,41 @@ export const getCompletionPercentage = (
   let completedCount = 0;
 
   questions.forEach((question) => {
+    console.debug("progressHelpers: checking question.field", question.field);
     if (question.section === "farmer") {
+      if (!question.field || !question.field.includes(".")) {
+        console.warn("progressHelpers: malformed farmer field", question.field);
+        return;
+      }
       const key = question.field.split(".")[1];
       if (
-        responses.farmer[key as keyof typeof responses.farmer] !==
+        responses?.farmer?.[key as keyof typeof responses.farmer] !==
         undefined
       ) {
         completedCount++;
       }
     } else if (question.section === "farm") {
+      if (!question.field || !question.field.includes(".")) {
+        console.warn("progressHelpers: malformed farm field", question.field);
+        return;
+      }
       const key = question.field.split(".")[1];
       if (
-        responses.farm[key as keyof typeof responses.farm] !== undefined
+        responses?.farm?.[key as keyof typeof responses.farm] !== undefined
       ) {
         completedCount++;
       }
     } else if (question.section === "block") {
+      if (!question.field) {
+        console.warn("progressHelpers: malformed block field (empty)", question.field);
+        return;
+      }
       const match = question.field.match(/blocks\[(\d+)\]\.(.*)/);
       if (match) {
         const blockIndex = Number(match[1]);
         const property = match[2];
         if (
-          responses.blocks?.[blockIndex]?.[
+          responses?.blocks?.[blockIndex]?.[
             property as keyof typeof responses.blocks[number]
           ] !== undefined
         ) {
