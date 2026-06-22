@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useInterviewStore } from "../state/interviewStore";
-import { completeSession } from "../services/sessionService";
+import { submitFarmer } from "../services/sessionService";
 
 export default function JsonPreview() {
   const navigate = useNavigate();
@@ -15,11 +15,13 @@ export default function JsonPreview() {
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
-      await completeSession(sessionId);
-      navigate("/success");
+      const result = await submitFarmer(sessionId);
+      navigate("/success", {
+        state: { submissionId: result.farmerId },
+      });
     } catch (error) {
       console.error(error);
-      alert("Failed to complete session");
+      alert("Failed to submit farmer");
       setSubmitting(false);
     }
   };

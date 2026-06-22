@@ -1,8 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { CheckCircle2, RotateCcw } from "lucide-react";
 
 export default function Success() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const submissionId = location.state?.submissionId ?? "Unavailable";
 
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4">
@@ -29,7 +31,7 @@ export default function Success() {
             </p>
 
             <p className="text-lg font-semibold text-slate-800 mt-1">
-              INT-2025-001
+              {submissionId}
             </p>
           </div>
 

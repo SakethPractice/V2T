@@ -3,7 +3,6 @@ import InterviewSession from "../models/InterviewSession.js";
 
 export const startSession = async (req, res) => {
   try {
-    console.log("BODY:", req.body);
     const { phone } = req.body || {};
 
     if (!phone) {
