@@ -24,10 +24,23 @@ export const initializeInterview = () : Question[] => {
       store.phone
     );
   }
-    return[
+    const baseQuestions = [
         ...farmerQuestions,
         ...farmQuestions,
     ];
+
+    const savedBlockCount = Number(
+      store.responses?.farm?.blockCount ?? 0
+    );
+
+    if (savedBlockCount > 0) {
+      return addBlockQuestions(
+        baseQuestions,
+        savedBlockCount
+      );
+    }
+
+    return baseQuestions;
 };
 
 

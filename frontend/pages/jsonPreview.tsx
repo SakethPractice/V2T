@@ -1,12 +1,28 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useInterviewStore } from "../state/interviewStore";
+import { completeSession } from "../services/sessionService";
 
 export default function JsonPreview() {
   const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
 
-  const responses = useInterviewStore(
-    (state) => state.responses
-  );
+  const { responses, sessionId } = useInterviewStore((state) => ({
+    responses: state.responses,
+    sessionId: state.sessionId,
+  }));
+
+  const handleSubmit = async () => {
+    try {
+      setSubmitting(true);
+      await completeSession(sessionId);
+      navigate("/success");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to complete session");
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-100 py-10">
@@ -41,15 +57,17 @@ export default function JsonPreview() {
           </button>
 
           <button
-            onClick={() => navigate("/success")}
+            onClick={handleSubmit}
+            disabled={submitting}
             className="
               px-6 py-3
               rounded-xl
               bg-blue-600
               text-white
+              disabled:bg-slate-400
             "
           >
-            Submit
+            {submitting ? "Submitting..." : "Submit"}
           </button>
         </div>
 

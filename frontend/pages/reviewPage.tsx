@@ -1,15 +1,40 @@
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useInterviewStore } from "../state/interviewStore";
 import ReviewCard from "../components/review/reviewCard";
 import EditableReviewRow from "../components/review/editableRow";
+import { saveSession } from "../services/sessionService";
 
 export default function ReviewPage() {
-  const { responses, questions } = useInterviewStore((state) => ({
+  const { responses, questions, sessionId } = useInterviewStore((state) => ({
     responses: state.responses,
     questions: state.questions,
+    sessionId: state.sessionId,
   }));
 
   const navigate = useNavigate();
+  const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const handleRowSave = () => undefined;
+
+  useEffect(() => {
+    if (!sessionId) {
+      return;
+    }
+
+    if (autosaveTimer.current) {
+      clearTimeout(autosaveTimer.current);
+    }
+
+    autosaveTimer.current = setTimeout(() => {
+      saveSession(sessionId, responses, "review");
+    }, 500);
+
+    return () => {
+      if (autosaveTimer.current) {
+        clearTimeout(autosaveTimer.current);
+      }
+    };
+  }, [responses, sessionId]);
 
   const getQuestionForField = (field: string) => {
     const normalizedField = field.replace(
@@ -51,50 +76,56 @@ export default function ReviewPage() {
         <ReviewCard title="Farmer Details">
           <EditableReviewRow
             label="Name"
-            value={responses.farmer.name}
+            value={responses?.farmer?.name ?? ""}
             section="farmer"
             field="farmer.name"
             question={getQuestionForField("farmer.name")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Date of Birth"
-            value={responses.farmer.DOB}
+            value={responses?.farmer?.DOB ?? ""}
             section="farmer"
             field="farmer.DOB"
             question={getQuestionForField("farmer.DOB")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Gender"
-            value={responses.farmer.gender}
+            value={responses?.farmer?.gender ?? ""}
             section="farmer"
             field="farmer.gender"
             question={getQuestionForField("farmer.gender")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Mobile Number"
-            value={responses.farmer.mobile_num}
+            value={responses?.farmer?.mobile_num ?? ""}
             section="farmer"
             field="farmer.mobile_num"
             question={getQuestionForField("farmer.mobile_num")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Village"
-            value={responses.farmer.village}
+            value={responses?.farmer?.village ?? ""}
             section="farmer"
             field="farmer.village"
             question={getQuestionForField("farmer.village")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Pincode"
-            value={responses.farmer.pincode}
+            value={responses?.farmer?.pincode ?? ""}
             section="farmer"
             field="farmer.pincode"
             question={getQuestionForField("farmer.pincode")}
+            onSave={handleRowSave}
           />
         </ReviewCard>
 
@@ -102,112 +133,125 @@ export default function ReviewPage() {
         <ReviewCard title="Farm Details">
           <EditableReviewRow
             label="Farm Name"
-            value={responses.farm.name}
+            value={responses?.farm?.name ?? ""}
             section="farm"
             field="farm.name"
             question={getQuestionForField("farm.name")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Address"
-            value={responses.farm.address}
+            value={responses?.farm?.address ?? ""}
             section="farm"
             field="farm.address"
             question={getQuestionForField("farm.address")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Total Area"
-            value={responses.farm.Tarea}
+            value={responses?.farm?.Tarea ?? ""}
             section="farm"
             field="farm.Tarea"
             question={getQuestionForField("farm.Tarea")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Used Area"
-            value={responses.farm.Uarea}
+            value={responses?.farm?.Uarea ?? ""}
             section="farm"
             field="farm.Uarea"
             question={getQuestionForField("farm.Uarea")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Unit"
-            value={responses.farm.unit}
+            value={responses?.farm?.unit ?? ""}
             section="farm"
             field="farm.unit"
             question={getQuestionForField("farm.unit")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Farm Type"
-            value={responses.farm.type}
+            value={responses?.farm?.type ?? ""}
             section="farm"
             field="farm.type"
             question={getQuestionForField("farm.type")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Water Source"
-            value={responses.farm.watersrc}
+            value={responses?.farm?.watersrc ?? ""}
             section="farm"
             field="farm.watersrc"
             question={getQuestionForField("farm.watersrc")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Soil Type"
-            value={responses.farm.soil}
+            value={responses?.farm?.soil ?? ""}
             section="farm"
             field="farm.soil"
             question={getQuestionForField("farm.soil")}
+            onSave={handleRowSave}
           />
 
           <EditableReviewRow
             label="Block Count"
-            value={responses.farm.blockCount}
+            value={responses?.farm?.blockCount ?? ""}
             section="farm"
             field="farm.blockCount"
             question={getQuestionForField("farm.blockCount")}
+            onSave={handleRowSave}
           />
         </ReviewCard>
 
-{responses.blocks.map((block, index) => (
+{(responses?.blocks ?? []).map((block, index) => (
   <ReviewCard
     key={index}
     title={`Block ${index + 1}`}
   >
     <EditableReviewRow
       label="Name"
-      value={block.name}
+      value={block?.name ?? ""}
       section="block"
       field={`block${index}.name`}
       question={getQuestionForField(`block${index}.name`)}
+      onSave={handleRowSave}
     />
 
     <EditableReviewRow
       label="Area"
-      value={block.area}
+      value={block?.area ?? ""}
       section="block"
       field={`block${index}.area`}
       question={getQuestionForField(`block${index}.area`)}
+      onSave={handleRowSave}
     />
 
     <EditableReviewRow
       label="Farming Type"
-      value={block.farmingType}
+      value={block?.farmingType ?? ""}
       section="block"
       field={`block${index}.farmingType`}
       question={getQuestionForField(`block${index}.farmingType`)}
+      onSave={handleRowSave}
     />
 
     <EditableReviewRow
       label="Water Source"
-      value={block.watersrc}
+      value={block?.watersrc ?? ""}
       section="block"
       field={`block${index}.watersrc`}
       question={getQuestionForField(`block${index}.watersrc`)}
+      onSave={handleRowSave}
     />
   </ReviewCard>
 ))}
