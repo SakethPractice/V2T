@@ -27,11 +27,7 @@ export const getSectionStatuses = (
     (q) => q.section === "block"
   );
 
-  console.debug("progressHelpers: farmerQuestions:", farmerQuestions.map((q) => q.field));
-  console.debug("progressHelpers: farmQuestions:", farmQuestions.map((q) => q.field));
-
   const isFarmerComplete = farmerQuestions.every((q) => {
-    console.debug("progressHelpers: processing farmer question field:", q.field);
     if (!q.field || !q.field.includes(".")) {
       console.warn("progressHelpers: malformed farmer field", q.field);
       return false;
@@ -44,7 +40,6 @@ export const getSectionStatuses = (
   });
 
   const isFarmComplete = farmQuestions.every((q) => {
-    console.debug("progressHelpers: processing farm question field:", q.field);
     if (!q.field || !q.field.includes(".")) {
       console.warn("progressHelpers: malformed farm field", q.field);
       return false;
@@ -62,7 +57,6 @@ export const getSectionStatuses = (
   const isBlocksComplete =
     isBlocksAvailable &&
     blockQuestions.every((q) => {
-      console.debug("progressHelpers: processing block question field:", q.field);
       if (!q.field) {
         console.warn("progressHelpers: malformed block field (empty)", q.field);
         return false;
@@ -134,7 +128,6 @@ export const getCompletionPercentage = (
   let completedCount = 0;
 
   questions.forEach((question) => {
-    console.debug("progressHelpers: checking question.field", question.field);
     if (question.section === "farmer") {
       if (!question.field || !question.field.includes(".")) {
         console.warn("progressHelpers: malformed farmer field", question.field);
