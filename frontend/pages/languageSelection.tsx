@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useInterviewStore } from "../state/interviewStore";
 import { useLanguage } from "../hooks/useLanguage";
-import { LANGUAGE_OPTIONS } from "../constants/languages";
+import { LANGUAGE_OPTIONS } from "../constants/languageSelect";
 
 export default function LanguageSelection() {
   const navigate = useNavigate();
