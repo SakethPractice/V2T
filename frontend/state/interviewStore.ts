@@ -1,5 +1,5 @@
 import { create } from "zustand";
-
+import i18n from "../i18n";
 import { InterviewStore } from "../types/interview";
 import { InterviewResponses } from "../types/response";
 
@@ -18,11 +18,13 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
         blocks: [],
     },
 
-    setLanguage: (language) =>
-      set({
-        selectedLanguage:language,
-    }),
-
+    setLanguage: (language) => {
+        i18n.changeLanguage(language);
+        set({
+            selectedLanguage: language,
+        });
+        },
+        
     setQuestions: (questions) => 
         set({
             questions,

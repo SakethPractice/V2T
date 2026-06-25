@@ -1,8 +1,16 @@
-import { useInterviewStore }
-  from "../state/interviewStore"
+import { useInterviewStore } from "../state/interviewStore";
 
 export const useLanguage = () => {
-  return useInterviewStore(
-    state => state.selectedLanguage
+  const language = useInterviewStore(
+    (state) => state.selectedLanguage
   );
+
+  const setLanguage = useInterviewStore(
+    (state) => state.setLanguage
+  );
+
+  return {
+    language: language || "en",
+    setLanguage,
+  };
 };

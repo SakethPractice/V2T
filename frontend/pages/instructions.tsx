@@ -1,47 +1,31 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Instructions() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const steps = t("instructions.steps", {
+    returnObjects: true,
+  }) as string[];
 
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4">
       <div className="w-full max-w-2xl bg-white rounded-3xl shadow-lg p-8">
-
         <h1 className="text-3xl font-bold text-center mb-8">
-          Instructions
+          {t("instructions.title")}
         </h1>
 
         <div className="space-y-4 mb-8">
-
-          <div className="flex gap-3">
-            <span>✓</span>
-            <p>Answer all questions carefully.</p>
-          </div>
-
-          <div className="flex gap-3">
-            <span>✓</span>
-            <p>You may answer using voice or manual input.</p>
-          </div>
-
-          <div className="flex gap-3">
-            <span>✓</span>
-            <p>You can review your answers before submission.</p>
-          </div>
-
-          <div className="flex gap-3">
-            <span>✓</span>
-            <p>Ensure all information provided is accurate.</p>
-          </div>
-
-          <div className="flex gap-3">
-            <span>✓</span>
-            <p>Questions can be replayed during the interview.</p>
-          </div>
-
+          {steps.map((step, index) => (
+            <div key={index} className="flex gap-3">
+              <span>✓</span>
+              <p>{step}</p>
+            </div>
+          ))}
         </div>
 
         <div className="flex justify-between">
-
           <button
             onClick={() => navigate("/")}
             className="
@@ -51,7 +35,7 @@ export default function Instructions() {
               hover:bg-slate-100
             "
           >
-            Back
+            {t("common.back")}
           </button>
 
           <button
@@ -64,11 +48,9 @@ export default function Instructions() {
               hover:bg-blue-700
             "
           >
-            Start Interview
+            {t("instructions.startInterview")}
           </button>
-
         </div>
-
       </div>
     </div>
   );

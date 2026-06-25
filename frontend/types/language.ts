@@ -1,14 +1,15 @@
-export type SupportedLanguage =
-  | "en"
-  | "te"
-  | "hi"
-  | "kn"
-  | "ta"
-  | "mr"
-  | "gu";
+export const SUPPORTED_LANGUAGES = [
+  "en",
+  "te",
+  "hi",
+  "kn",
+  "ta",
+  "mr",
+  "gu",
+] as const;
 
-export interface LanguageOption {
-  code: SupportedLanguage;
-  name: string;
-  nativeName: string;
-}
+export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number];
+
+export type Translation = Record<LanguageCode, string>;
+
+export const DEFAULT_LANGUAGE: LanguageCode = "en";
