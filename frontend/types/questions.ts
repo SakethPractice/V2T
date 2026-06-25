@@ -12,15 +12,19 @@ export type QuestionSection =
   | "farm"
   | "block"
   | "review";
+
 export interface Question {
   id: string;
   section: QuestionSection;
   field: string;
-  question: Translation;
+  question: Translation; // Main interview question
+  placeholder?: Translation; // Input placeholder
+  helperText?: Translation;// Helper text shown below the question
+  ttsText?: Translation;// Text used for TTS (can differ from UI question)
   type: QuestionType;
   required: boolean;
 
-  options?: string[];
+  options?: Translation[];
 
   min?: number;
   max?: number;

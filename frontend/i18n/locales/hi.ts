@@ -49,12 +49,15 @@ const hi = {
   interview: {
     title: "साक्षात्कार",
     question: "प्रश्न",
-    questionOf: "प्रश्न {{current}} / {{total}}",
+    questionOf: " {{current}} / {{total}}",
+    percentComplete: "{{percent}}% प्रश्न",
 
+    repeatQuestion: "प्रश्न दोबारा सुनें",
     review: "उत्तर की समीक्षा करें",
     finish: "समाप्त करें",
 
     typeAnswer: "अपना उत्तर लिखें...",
+    progressHint: "📝 अगले चरण में जाने के लिए प्रत्येक अनुभाग के सभी प्रश्नों के उत्तर दें।",
     enterValue: "मान दर्ज करें",
     selectOption: "एक विकल्प चुनें",
 

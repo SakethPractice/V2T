@@ -50,10 +50,13 @@ const en = {
     title: "Interview",
     question: "Question",
     questionOf: "Question {{current}} of {{total}}",
-
+    percentComplete: "{{percent}}% Complete",
+    
+    repeatQuestion: "Repeat Question",
     review: "Review Answers",
     finish: "Finish",
 
+    progressHint: "📝 Answer all questions in each section to proceed to the next phase.",
     typeAnswer: "Type your answer...",
     enterValue: "Enter a value",
     selectOption: "Select an option",

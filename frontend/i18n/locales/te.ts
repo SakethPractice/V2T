@@ -50,11 +50,14 @@ const te = {
     title: "ఇంటర్వ్యూ",
     question: "ప్రశ్న",
     questionOf: "ప్రశ్న {{current}} / {{total}}",
+    percentComplete: "{{percent}}% పూర్తైంది",
 
+    repeatQuestion: "ప్రశ్నను మళ్లీ వినండి",
     review: "సమాధానాలను సమీక్షించండి",
     finish: "ముగించండి",
 
     typeAnswer: "మీ సమాధానాన్ని టైప్ చేయండి...",
+    progressHint: "📝 తదుపరి దశకు వెళ్లడానికి ప్రతి విభాగంలోని అన్ని ప్రశ్నలకు సమాధానం ఇవ్వండి.",
     enterValue: "విలువను నమోదు చేయండి",
     selectOption: "ఒక ఎంపికను ఎంచుకోండి",
 

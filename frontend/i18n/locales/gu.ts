@@ -50,11 +50,14 @@ const gu = {
     title: "મુલાકાત",
     question: "પ્રશ્ન",
     questionOf: "પ્રશ્ન {{current}} / {{total}}",
+    percentComplete: "{{percent}}% પ્રશ્ન",
 
+    repeatQuestion: "પ્રશ્ન ફરી સાંભળો",
     review: "જવાબોની સમીક્ષા કરો",
     finish: "પૂર્ણ કરો",
 
     typeAnswer: "તમારો જવાબ લખો...",
+    progressHint: "📝 આગળના તબક્કામાં જવા માટે દરેક વિભાગના બધા પ્રશ્નોના જવાબ આપો.",
     enterValue: "મૂલ્ય દાખલ કરો",
     selectOption: "એક વિકલ્પ પસંદ કરો",
 

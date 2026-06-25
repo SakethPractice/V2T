@@ -50,11 +50,14 @@ const mr = {
     title: "मुलाखत",
     question: "प्रश्न",
     questionOf: "प्रश्न {{current}} / {{total}}",
+    percentComplete: "{{percent}}% प्रश्न",
 
+    repeatQuestion: "प्रश्न पुन्हा ऐका",
     review: "उत्तरांचे पुनरावलोकन करा",
     finish: "पूर्ण करा",
 
     typeAnswer: "तुमचे उत्तर लिहा...",
+    progressHint: "📝 पुढील टप्प्यावर जाण्यासाठी प्रत्येक विभागातील सर्व प्रश्नांची उत्तरे द्या.",
     enterValue: "मूल्य प्रविष्ट करा",
     selectOption: "एक पर्याय निवडा",
 

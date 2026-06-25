@@ -4,6 +4,7 @@ import {
   getSectionStatuses,
   getCompletionPercentage,
 } from "../../utils/progressHelpers";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export default function ProgressSidebar() {
   const { questions, responses, currentQuestionIndex, goToQuestion } =
@@ -14,6 +15,8 @@ export default function ProgressSidebar() {
     responses,
     currentQuestionIndex
   );
+
+  const { t } = useTranslation();
 
   const completionPercentage = getCompletionPercentage(
     questions,
@@ -92,10 +95,13 @@ export default function ProgressSidebar() {
         {/* Header */}
         <div>
           <h2 className="text-2xl font-bold text-slate-900">
-            Progress
+            {t("common.progress")}
           </h2>
           <p className="text-sm text-slate-500 mt-1">
-            Question {currentQuestionIndex + 1} of {questions.length}
+            {t("common.questionOf", {
+            current: currentQuestionIndex + 1,
+            total: questions.length,
+            })}
           </p>
         </div>
 
@@ -108,7 +114,9 @@ export default function ProgressSidebar() {
             />
           </div>
           <p className="text-sm font-medium text-slate-600">
-            {completionPercentage}% Complete
+            {t("common.percentComplete", {
+              percent: completionPercentage,
+            })}
           </p>
         </div>
 
@@ -145,10 +153,17 @@ export default function ProgressSidebar() {
                   {section.label}
                 </p>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  {section.status === "completed" && "✓ Completed"}
-                  {section.status === "current" && "In Progress"}
-                  {section.status === "notStarted" && "Not Started"}
-                  {section.status === "disabled" && "Locked"}
+                  {section.status === "completed" &&
+                  `✓ ${t("common.completed")}`}
+
+                  {section.status === "current" &&
+                    t("common.inProgress")}
+
+                  {section.status === "notStarted" &&
+                    t("common.notStarted")}
+
+                  {section.status === "disabled" &&
+                    t("common.locked")}
                 </p>
               </div>
             </button>
@@ -158,8 +173,7 @@ export default function ProgressSidebar() {
         {/* Info Box */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-800">
-            📝 Answer all questions in each section to proceed to the
-            next phase.
+           {t("interview.progressHint")}
           </p>
         </div>
       </div>

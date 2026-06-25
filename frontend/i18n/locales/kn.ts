@@ -50,11 +50,14 @@ const kn = {
     title: "ಸಂದರ್ಶನ",
     question: "ಪ್ರಶ್ನೆ",
     questionOf: "ಪ್ರಶ್ನೆ {{current}} / {{total}}",
+    percentComplete: "{{percent}}% ಪೂರ್ಣಗೊಂಡಿದೆ",
 
+    repeatQuestion: "ಪ್ರಶ್ನೆಯನ್ನು ಮತ್ತೆ ಕೇಳಿ",
     review: "ಉತ್ತರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ",
     finish: "ಮುಗಿಸಿ",
 
     typeAnswer: "ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಟೈಪ್ ಮಾಡಿ...",
+    progressHint: "📝 ಮುಂದಿನ ಹಂತಕ್ಕೆ ಸಾಗಲು ಪ್ರತಿಯೊಂದು ವಿಭಾಗದ ಎಲ್ಲಾ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ.",
     enterValue: "ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ",
     selectOption: "ಒಂದು ಆಯ್ಕೆಯನ್ನು ಆರಿಸಿ",
 
