@@ -1,12 +1,11 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-
 import { useNavigate } from "react-router-dom";
-
 import { initializeInterview } from "../question-engine/engine/interviewEngine";
 import { fetchPincode } from "../services/pincodeService";
 import { useInterviewStore } from "../state/interviewStore";
+import { useLanguage } from "../hooks/useLanguage";
+import { useTranslation } from "../hooks/useTranslation";
 import { saveSession } from "../services/sessionService";
-
 import { addBlockQuestions } from "../question-engine/engine/interviewEngine";
 
 import {
@@ -16,13 +15,13 @@ import {
 } from "../utils/validator";
 
 import ProgressSidebar from "../components/interview/progressSidebar";
-import { useLanguage } from "../hooks/useLanguage";
-import { SupportedLanguage } from "../types/language";
 
 export default function InterviewPage() {
 
   const navigate = useNavigate();
-  const selectedLanguage = useLanguage();
+
+  const { language } = useLanguage();
+  const { t } = useTranslation();
 
   const {
     questions,
@@ -44,6 +43,45 @@ export default function InterviewPage() {
 
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const initialResumeQuestionId = useRef(resumeQuestionId);
+
+  const currentQuestion = questions[currentQuestionIndex];
+
+  const getSavedAnswer = () => {
+    if (!currentQuestion) return "";
+    if (!currentQuestion.field) return "";
+
+    const parts = currentQuestion.field.split(".");
+    if (parts.length < 2) return "";
+
+    const section = parts[0];
+    const key = parts[1];
+
+    if (section === "farmer") {
+      return (
+        responses?.farmer?.[key as keyof typeof responses.farmer] ?? ""
+      );
+    }
+
+    if (section === "farm") {
+      return (
+        responses?.farm?.[key as keyof typeof responses.farm] ?? ""
+      );
+    }
+
+    if (section.startsWith("blocks[") || section.startsWith("block")) {
+      const idx = section.match(/\d+/)?.[0];
+      if (!idx) return "";
+      const blockIndex = Number(idx);
+
+      return (
+        responses?.blocks?.[blockIndex]?.[
+          key as keyof typeof responses.blocks[number]
+        ] ?? ""
+      );
+    }
+
+    return "";
+  };
 
   useEffect(() => {
     const interviewQuestions = initializeInterview();
@@ -68,10 +106,10 @@ export default function InterviewPage() {
   ]);
 
   useEffect(() => {
-  setAnswerValue(
-    String(getSavedAnswer())
-  );
-}, [currentQuestionIndex,responses]);
+    setAnswerValue(
+      String(getSavedAnswer())
+    );
+  }, [currentQuestionIndex, responses]);
 
  
   // Autosave: fires whenever responses or currentQuestionIndex change.
@@ -79,8 +117,6 @@ export default function InterviewPage() {
   // Guards: sessionId must exist, questions must be loaded,
   // currentQuestion must resolve — prevents saves during initialization.
   useEffect(() => {
-    const currentQuestion = questions[currentQuestionIndex];
- 
     if (!sessionId || !currentQuestion || questions.length === 0) return;
  
     if (autosaveTimer.current) {
@@ -103,61 +139,6 @@ export default function InterviewPage() {
     };
   }, [responses, currentQuestionIndex]);
  
-
-  const currentQuestion = questions[currentQuestionIndex];
-
-  const getQuestionText = (
-    question: string | Partial<Record<SupportedLanguage, string>> | undefined
-  ) => {
-    if (!question) return "";
-
-    if (typeof question === "string") {
-      return question;
-    }
-
-    return (
-      question[selectedLanguage] ??
-      question.en ??
-      ""
-    );
-  };
-
-const getSavedAnswer = () => {
-  if (!currentQuestion) return "";
-  if (!currentQuestion.field) return "";
-
-  const parts = currentQuestion.field.split(".");
-  if (parts.length < 2) return "";
-
-  const section = parts[0];
-  const key = parts[1];
-
-  if (section === "farmer") {
-    return (
-      responses?.farmer?.[key as keyof typeof responses.farmer] ?? ""
-    );
-  }
-
-  if (section === "farm") {
-    return (
-      responses?.farm?.[key as keyof typeof responses.farm] ?? ""
-    );
-  }
-
-  if (section.startsWith("blocks[") || section.startsWith("block")) {
-    const idx = section.match(/\d+/)?.[0];
-    if (!idx) return "";
-    const blockIndex = Number(idx);
-
-    return (
-      responses?.blocks?.[blockIndex]?.[
-        key as keyof typeof responses.blocks[number]
-      ] ?? ""
-    );
-  }
-
-  return "";
-};
 
   const isGenderQuestion =
     currentQuestion?.field === "farmer.gender";
@@ -214,11 +195,12 @@ const getSavedAnswer = () => {
         return (
           <div className="grid gap-3 sm:grid-cols-3">
             {currentQuestion.options.map((option) => {
-              const checked = currentAnswer === option;
+              const optionLabel = option[language];
+              const checked = currentAnswer === option.en;
 
               return (
                 <label
-                  key={option}
+                  key={optionLabel}
                   className={`flex items-center gap-3 rounded-xl border px-4 py-3 transition-colors ${
                     checked
                       ? "border-blue-600 bg-blue-50"
@@ -226,16 +208,16 @@ const getSavedAnswer = () => {
                   }`}
                 >
                   <input
-                    type="checkbox"
+                    type="radio"
                     checked={checked}
                     onChange={() =>
-                      setAnswerValue(checked ? "" : option)
+                      setAnswerValue(checked ? "" : option.en)
                     }
                     className="h-4 w-4 accent-blue-600"
                   />
 
                   <span className="text-slate-700">
-                    {option}
+                    {optionLabel}
                   </span>
                 </label>
               );
@@ -261,13 +243,22 @@ const getSavedAnswer = () => {
             focus:ring-blue-500
           "
         >
-          <option value="">Select an option</option>
+          <option value="">
+            {t("interview.selectOption")}
+          </option>
 
-          {currentQuestion.options.map((option) => (
-            <option key={option} value={option}>
-              {option}
+          {currentQuestion.options.map((option) => {
+            const optionLabel = option[language] ?? option.en;
+
+            return (
+            <option
+              key={option.en}
+              value={option.en}
+            >
+          {optionLabel}
             </option>
-          ))}
+          );
+          })}
         </select>
       );
     }
@@ -300,7 +291,9 @@ const getSavedAnswer = () => {
 
           {currentAnswer && (
             <p className="text-sm text-slate-500">
-              Selected image: {currentAnswer}
+              {t("interview.selectedImage", {
+                fileName: currentAnswer,
+              })}
             </p>
           )}
         </div>
@@ -327,8 +320,9 @@ const getSavedAnswer = () => {
         value={currentAnswer}
         onChange={handleTextChange}
         placeholder={
+          currentQuestion.placeholder?.[language] ??
           placeholderMap[currentQuestion.field] ??
-          "Type your answer"
+          t("interview.typeAnswer")
         }
         inputMode={
           isDateQuestion
@@ -434,7 +428,7 @@ const handleNext = async () => {
 }; 
 
   if (!currentQuestion) {
-    return <div>Loading interview...</div>;
+    return <div>{t("common.loading")}</div>;
   }
 
   return (
@@ -446,11 +440,14 @@ const handleNext = async () => {
           {/* Header */}
           <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
             <h1 className="text-2xl font-bold">
-              Voice Interview Platform
+              {t("language.title")}
             </h1>
 
             <p className="text-slate-500 mt-2">
-              Question {currentQuestionIndex + 1} of {questions.length}
+              {t("interview.questionOf", {
+                current: currentQuestionIndex + 1,
+                total: questions.length,
+              })}
             </p>
 
             <div className="w-full h-3 bg-slate-200 rounded-full mt-4">
@@ -470,12 +467,12 @@ const handleNext = async () => {
 
             <div className="mb-4">
               <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full">
-                {currentQuestion.section}
+                {t(`sections.${currentQuestion.section}`)}
               </span>
             </div>
 
             <h2 className="text-3xl font-semibold leading-relaxed">
-              {getQuestionText(currentQuestion.question)}
+              {currentQuestion.question[language]}
             </h2>
 
           </div>
@@ -483,7 +480,7 @@ const handleNext = async () => {
           {/* Answer Card */}
           <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
             <h3 className="text-lg font-medium mb-4">
-              Your Answer
+              {t("interview.answerLabel")}
             </h3>
 
             {renderAnswerInput()}
@@ -511,7 +508,7 @@ const handleNext = async () => {
                 disabled:cursor-not-allowed
               "
             >
-              Previous
+              {t("common.previous")}
             </button>
 
             <button
@@ -524,7 +521,7 @@ const handleNext = async () => {
                 hover:bg-blue-700
               "
             >
-              Next
+              {t("common.next")}
             </button>
           </div>
 
