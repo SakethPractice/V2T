@@ -3,180 +3,180 @@ import { InterviewResponses } from "../types/response";
 
 export interface SectionStatus {
   section: QuestionSection;
-  label: string;
   status: "completed" | "current" | "notStarted" | "disabled";
   firstQuestionIndex: number;
   isDisabled: boolean;
 }
+
+const hasValue = (value: unknown): boolean => {
+  if (value === undefined || value === null) return false;
+  if (typeof value === "string") return value.trim() !== "";
+  return true;
+};
+
+const getNestedValue = (
+  responses: InterviewResponses,
+  section: "farmer" | "farm",
+  field: string
+) => {
+  const key = field.split(".")[1];
+
+  return section === "farmer"
+    ? responses.farmer?.[key as keyof typeof responses.farmer]
+    : responses.farm?.[key as keyof typeof responses.farm];
+};
+
+const getBlockValue = (
+  responses: InterviewResponses,
+  field: string
+) => {
+  const match = field.match(/blocks\[(\d+)\]\.(.*)/);
+
+  if (!match) return undefined;
+
+  const blockIndex = Number(match[1]);
+  const property = match[2];
+
+  return responses.blocks?.[blockIndex]?.[
+    property as keyof typeof responses.blocks[number]
+  ];
+};
+
+const isQuestionAnswered = (
+  question: Question,
+  responses: InterviewResponses
+) => {
+  if (!question.field) return false;
+
+  switch (question.section) {
+    case "farmer":
+      return hasValue(
+        getNestedValue(responses, "farmer", question.field)
+      );
+
+    case "farm":
+      return hasValue(
+        getNestedValue(responses, "farm", question.field)
+      );
+
+    case "block":
+      return hasValue(
+        getBlockValue(responses, question.field)
+      );
+
+    default:
+      return false;
+  }
+};
 
 export const getSectionStatuses = (
   questions: Question[],
   responses: InterviewResponses,
   currentQuestionIndex: number
 ): SectionStatus[] => {
-  const currentQuestion = questions[currentQuestionIndex];
-  const currentSection = currentQuestion?.section;
+  const currentSection = questions[currentQuestionIndex]?.section;
 
   const farmerQuestions = questions.filter(
     (q) => q.section === "farmer"
   );
+
   const farmQuestions = questions.filter(
     (q) => q.section === "farm"
   );
+
   const blockQuestions = questions.filter(
     (q) => q.section === "block"
   );
 
-  console.debug("progressHelpers: farmerQuestions:", farmerQuestions.map((q) => q.field));
-  console.debug("progressHelpers: farmQuestions:", farmQuestions.map((q) => q.field));
+  const blockCount = Number(responses.farm?.blockCount ?? 0);
+  const isBlocksAvailable = blockCount > 0;
 
-  const isFarmerComplete = farmerQuestions.every((q) => {
-    console.debug("progressHelpers: processing farmer question field:", q.field);
-    if (!q.field || !q.field.includes(".")) {
-      console.warn("progressHelpers: malformed farmer field", q.field);
-      return false;
-    }
-    const key = q.field.split(".")[1];
-    return (
-      responses?.farmer?.[key as keyof typeof responses.farmer] !==
-      undefined
-    );
-  });
+  const isFarmerComplete = farmerQuestions.every((q) =>
+    isQuestionAnswered(q, responses)
+  );
 
-  const isFarmComplete = farmQuestions.every((q) => {
-    console.debug("progressHelpers: processing farm question field:", q.field);
-    if (!q.field || !q.field.includes(".")) {
-      console.warn("progressHelpers: malformed farm field", q.field);
-      return false;
-    }
-    const key = q.field.split(".")[1];
-    return (
-      responses?.farm?.[key as keyof typeof responses.farm] !== undefined
-    );
-  });
-
-  const isBlocksAvailable =
-    responses?.farm?.blockCount &&
-    Number(responses?.farm?.blockCount) > 0;
+  const isFarmComplete = farmQuestions.every((q) =>
+    isQuestionAnswered(q, responses)
+  );
 
   const isBlocksComplete =
     isBlocksAvailable &&
-    blockQuestions.every((q) => {
-      console.debug("progressHelpers: processing block question field:", q.field);
-      if (!q.field) {
-        console.warn("progressHelpers: malformed block field (empty)", q.field);
-        return false;
-      }
-      const match = q.field.match(/blocks\[(\d+)\]\.(.*)/);
-      if (!match) return false;
-      const blockIndex = Number(match[1]);
-      const property = match[2];
-      return (
-        responses?.blocks?.[blockIndex]?.[
-          property as keyof typeof responses.blocks[number]
-        ] !== undefined
-      );
-    });
+    blockQuestions.every((q) =>
+      isQuestionAnswered(q, responses)
+    );
 
-  const statuses: SectionStatus[] = [
+  return [
     {
       section: "farmer",
-      label: "Farmer Details",
       status: isFarmerComplete
         ? "completed"
         : currentSection === "farmer"
-          ? "current"
-          : "notStarted",
-      firstQuestionIndex: farmerQuestions.length > 0
-        ? questions.indexOf(farmerQuestions[0])
-        : 0,
+        ? "current"
+        : "notStarted",
+
+      firstQuestionIndex:
+        farmerQuestions.length > 0
+          ? questions.indexOf(farmerQuestions[0])
+          : 0,
+
       isDisabled: false,
     },
+
     {
       section: "farm",
-      label: "Farm Details",
       status: isFarmComplete
         ? "completed"
         : currentSection === "farm"
-          ? "current"
-          : "notStarted",
-      firstQuestionIndex: farmQuestions.length > 0
-        ? questions.indexOf(farmQuestions[0])
-        : 0,
+        ? "current"
+        : "notStarted",
+
+      firstQuestionIndex:
+        farmQuestions.length > 0
+          ? questions.indexOf(farmQuestions[0])
+          : 0,
+
       isDisabled: false,
     },
+
     {
       section: "block",
-      label: "Block Details",
+
       status: isBlocksComplete
         ? "completed"
         : currentSection === "block"
-          ? "current"
-          : isBlocksAvailable
-            ? "notStarted"
-            : "disabled",
-      firstQuestionIndex: blockQuestions.length > 0
-        ? questions.indexOf(blockQuestions[0])
-        : 0,
+        ? "current"
+        : isBlocksAvailable
+        ? "notStarted"
+        : "disabled",
+
+      firstQuestionIndex:
+        blockQuestions.length > 0
+          ? questions.indexOf(blockQuestions[0])
+          : 0,
+
       isDisabled: !isBlocksAvailable,
     },
   ];
-
-  return statuses;
 };
 
 export const getCompletionPercentage = (
   questions: Question[],
   responses: InterviewResponses
 ): number => {
-  if (questions.length === 0) return 0;
+  const blockCount = Number(responses.farm?.blockCount ?? 0);
 
-  let completedCount = 0;
-
-  questions.forEach((question) => {
-    console.debug("progressHelpers: checking question.field", question.field);
-    if (question.section === "farmer") {
-      if (!question.field || !question.field.includes(".")) {
-        console.warn("progressHelpers: malformed farmer field", question.field);
-        return;
-      }
-      const key = question.field.split(".")[1];
-      if (
-        responses?.farmer?.[key as keyof typeof responses.farmer] !==
-        undefined
-      ) {
-        completedCount++;
-      }
-    } else if (question.section === "farm") {
-      if (!question.field || !question.field.includes(".")) {
-        console.warn("progressHelpers: malformed farm field", question.field);
-        return;
-      }
-      const key = question.field.split(".")[1];
-      if (
-        responses?.farm?.[key as keyof typeof responses.farm] !== undefined
-      ) {
-        completedCount++;
-      }
-    } else if (question.section === "block") {
-      if (!question.field) {
-        console.warn("progressHelpers: malformed block field (empty)", question.field);
-        return;
-      }
-      const match = question.field.match(/blocks\[(\d+)\]\.(.*)/);
-      if (match) {
-        const blockIndex = Number(match[1]);
-        const property = match[2];
-        if (
-          responses?.blocks?.[blockIndex]?.[
-            property as keyof typeof responses.blocks[number]
-          ] !== undefined
-        ) {
-          completedCount++;
-        }
-      }
-    }
+  const activeQuestions = questions.filter((q) => {
+    if (q.section !== "block") return true;
+    return blockCount > 0;
   });
 
-  return Math.round((completedCount / questions.length) * 100);
+  if (activeQuestions.length === 0) return 0;
+
+  const completed = activeQuestions.filter((q) =>
+    isQuestionAnswered(q, responses)
+  ).length;
+
+  return Math.round(
+    (completed / activeQuestions.length) * 100
+  );
 };

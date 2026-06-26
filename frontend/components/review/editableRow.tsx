@@ -3,6 +3,9 @@ import { Pencil, Check, X } from "lucide-react";
 import { Question } from "../../types/questions";
 import { sanitizeAnswer, validateAnswer } from "../../utils/validator";
 import { useInterviewStore } from "../../state/interviewStore";
+import { useTranslation } from "../../hooks/useTranslation";
+import { translate } from "../../i18n/translate";
+import { useLanguage } from "../../hooks/useLanguage";
 
 interface EditableReviewRowProps {
   label: string;
@@ -27,6 +30,8 @@ export default function EditableReviewRow({
   const setAnswer = useInterviewStore(
     (state) => state.setAnswer
   );
+  const { t } = useTranslation();
+  const { language } = useLanguage();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -108,12 +113,17 @@ export default function EditableReviewRow({
                 w-full
               "
             >
-              <option value="">Select an option</option>
-              {question.options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
+            <option value="">{t("interview.selectOption")}</option>
+
+          {question.options?.map((option) => (
+          <option
+            key={option.en}
+            value={option.en}
+          >
+          {translate(option, language)}
+          </option>
+          ))}
+
             </select>
           ) : (
             <input

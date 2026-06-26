@@ -1,3 +1,5 @@
+import { Translation } from "./language";
+
 export type QuestionType =
   | "text"
   | "number"
@@ -15,11 +17,12 @@ export interface Question {
   id: string;
   section: QuestionSection;
   field: string;
-  question: string;
+  question: Translation; // Main interview question
+  placeholder?: Translation; // Input placeholder
   type: QuestionType;
   required: boolean;
 
-  options?: string[];
+  options?: Translation[];
 
   min?: number;
   max?: number;

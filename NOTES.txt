@@ -41,3 +41,42 @@ user identification - phone +otp
 draft 
 transaction log - sentry
 
+
+
+pincode first then village to get Address
+dob calendar
+phone number question - non editable- skip- ony review page
+max min for area of land
+block limits 
+review guard rails- option edits
+
+
+Unique key- phone number
+fo enters number before sending a link
+
+3 logins
+admin
+fo
+Farmer
+
+
+admin
+overview of all FO
+can assign farm packages
+can approve if FO cant
+bulk upload using csv
+
+FO has 2 tabs
+
+use farm package and send link-link associated with farmer phone number - otp
+review farms-> submit to database
+assisted filling
+
+Farmer 
+log in with phone number + otp
+link after submitting gives read only view
+link stays for 10 days
+
+Smaller app that handles this current form app
+
+review page that farmer sees can have voice editing again

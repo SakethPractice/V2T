@@ -1,14 +1,7 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useInterviewStore } from "../state/interviewStore";
-
-const languages = [
-  { code: "en", label: "English" },
-  { code: "kn", label: "ಕನ್ನಡ" },
-  { code: "te", label: "తెలుగు" },
-  { code: "hi", label: "हिन्दी" },
-  { code: "ta", label: "தமிழ்" },
-];
+import { useLanguage } from "../hooks/useLanguage";
+import { LANGUAGE_OPTIONS } from "../constants/languageSelect";
 
 export default function LanguageSelection() {
   const navigate = useNavigate();
@@ -16,24 +9,22 @@ export default function LanguageSelection() {
     (state) => state.resumeQuestionId
   );
 
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const { language, setLanguage } = useLanguage();
 
   const handleContinue = () => {
-    // later:
-    // setLanguage(selectedLanguage);
-
     navigate(
-      resumeQuestionId ? "/interview" : "/instructions"
+      resumeQuestionId
+        ? "/interview"
+        : "/instructions"
     );
   };
 
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-lg p-8">
-
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-slate-800">
-            Farm Onboarding
+            Farmer Onboarding
           </h1>
 
           <p className="text-slate-500 mt-3">
@@ -42,10 +33,10 @@ export default function LanguageSelection() {
         </div>
 
         <div className="space-y-3 mb-8">
-          {languages.map((language) => (
+          {LANGUAGE_OPTIONS.map((lang) => (
             <button
-              key={language.code}
-              onClick={() => setSelectedLanguage(language.code)}
+              key={lang.code}
+              onClick={() => setLanguage(lang.code)}
               className={`
                 w-full
                 p-4
@@ -55,13 +46,21 @@ export default function LanguageSelection() {
                 transition-all
 
                 ${
-                  selectedLanguage === language.code
+                  language === lang.code
                     ? "border-blue-600 bg-blue-50 text-blue-700"
                     : "border-slate-200 hover:border-slate-400"
                 }
               `}
             >
-              {language.label}
+              <div>
+                <p className="font-medium">
+                  {lang.nativeName}
+                </p>
+
+                <p className="text-sm text-slate-500">
+                  {lang.englishName}
+                </p>
+              </div>
             </button>
           ))}
         </div>
@@ -81,7 +80,6 @@ export default function LanguageSelection() {
         >
           Continue
         </button>
-
       </div>
     </div>
   );

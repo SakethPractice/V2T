@@ -2,99 +2,444 @@ import { Question } from "../../types/questions";
 
 export const farmQuestions: Question[] = [
     {
-        id: "farm_name",
-        section: "farm",
-        field: "farm.name",
-        question: "What is the name of the farm?",
-        type: "text",
-        required : true,
-        minLength : 1,
+    id: "farm_name",
+    section: "farm",
+    field: "farm.name",
+
+    question: {
+        en: "What is the name of the farm?",
+        te: "వ్యవసాయ క్షేత్రం పేరు ఏమిటి?",
+        hi: "खेत का नाम क्या है?",
+        kn: "ಕೃಷಿ ಜಮೀನಿನ ಹೆಸರು ಏನು?",
+        ta: "பண்ணையின் பெயர் என்ன?",
+        mr: "शेताचे नाव काय आहे?",
+        gu: "ખેતરનું નામ શું છે?",
     },
 
-    {
-        id: "farm_address",
-        section: "farm",
-        field: "farm.address",
-        question: "Where is the farm?",
-        type: "text",
-        required : true,
-        minLength : 4,
+    placeholder: {
+        en: "Enter farm name",
+        te: "వ్యవసాయ క్షేత్రం పేరును నమోదు చేయండి",
+        hi: "खेत का नाम दर्ज करें",
+        kn: "ಕೃಷಿ ಜಮೀನಿನ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+        ta: "பண்ணையின் பெயரை உள்ளிடவும்",
+        mr: "शेताचे नाव प्रविष्ट करा",
+        gu: "ખેતરનું નામ દાખલ કરો",
     },
 
-    {
-        id: "farm_area_unit",
-        section: "farm",
-        field: "farm.unit",
-        question: "What is the unit of measurement?",
-        type: "select",
-        required: true,
-        options: ["Hectare", "Acre", "Square Meter", "Square Foot", "Bigha"],
+    type: "text",
+    required: true,
+    minLength: 1,
+},
+
+{
+    id: "farm_address",
+    section: "farm",
+    field: "farm.address",
+
+    question: {
+        en: "Where is the farm located?",
+        te: "వ్యవసాయ క్షేత్రం ఎక్కడ ఉంది?",
+        hi: "खेत कहाँ स्थित है?",
+        kn: "ಕೃಷಿ ಜಮೀನು ಎಲ್ಲಿದೆ?",
+        ta: "பண்ணை எங்கு அமைந்துள்ளது?",
+        mr: "शेत कुठे आहे?",
+        gu: "ખેતર ક્યાં આવેલું છે?",
     },
 
-    {
-        id: "farm_Tarea",
-        section: "farm",
-        field: "farm.Tarea",
-        question: "How big is your farm?",
-        type: "number",
-        required : true,
-        min: 0.5,
+    placeholder: {
+        en: "Enter farm address",
+        te: "వ్యవసాయ క్షేత్రం చిరునామాను నమోదు చేయండి",
+        hi: "खेत का पता दर्ज करें",
+        kn: "ಜಮೀನಿನ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ",
+        ta: "பண்ணையின் முகவரியை உள்ளிடவும்",
+        mr: "शेताचा पत्ता प्रविष्ट करा",
+        gu: "ખેતરનું સરનામું દાખલ કરો",
     },
 
-    {
-        id: "farm_Uarea",
-        section: "farm",
-        field: "farm.Uarea",
-        question: "How much is being used?",
-        type: "number",
-        required : true,
+    type: "text",
+    required: true,
+    minLength: 4,
+},
+
+{
+    id: "farm_area_unit",
+    section: "farm",
+    field: "farm.unit",
+
+    question: {
+        en: "What is the unit of measurement?",
+        te: "విస్తీర్ణాన్ని ఏ యూనిట్‌లో కొలుస్తారు?",
+        hi: "क्षेत्रफल किस इकाई में मापा जाता है?",
+        kn: "ವಿಸ್ತೀರ್ಣವನ್ನು ಯಾವ ಘಟಕದಲ್ಲಿ ಅಳೆಯುತ್ತೀರಿ?",
+        ta: "பரப்பளவை எந்த அலகில் அளக்கிறீர்கள்?",
+        mr: "क्षेत्रफळ कोणत्या एककात मोजता?",
+        gu: "વિસ્તાર કઈ એકમમાં માપો છો?",
     },
 
-    {
-        id: "farm_type",
-        section: "farm",
-        field: "farm.type",
-        question: "What type of farming do you practice?",
-        type: "select",
-        required: true,
-        options: ["Crop", "Horticulture", "Mixed", "Organic"],
+    type: "select",
+    required: true,
+
+    options: [
+            {
+                en: "Hectare",
+                te: "హెక్టారు",
+                hi: "हेक्टेयर",
+                kn: "ಹೆಕ್ಟೇರ್",
+                ta: "ஹெக்டேர்",
+                mr: "हेक्टर",
+                gu: "હેક્ટર",
+            },
+        
+            {
+                en: "Acre",
+                te: "ఎకరం",
+                hi: "एकड़",
+                kn: "ಎಕರೆ",
+                ta: "ஏக்கர்",
+                mr: "एकर",
+                gu: "એકર",
+            },
+
+            {
+                en: "Square Meter",
+                te: "చదరపు మీటర్",
+                hi: "वर्ग मीटर",
+                kn: "ಚದರ ಮೀಟರ್",
+                ta: "சதுர மீட்டர்",
+                mr: "चौरस मीटर",
+                gu: "ચોરસ મીટર",
+            },
+
+            {
+                en: "Square Foot",
+                te: "చదరపు అడుగు",
+                hi: "वर्ग फुट",
+                kn: "ಚದರ ಅಡಿ",
+                ta: "சதுர அடி",
+                mr: "चौरस फूट",
+                gu: "ચોરસ ફૂટ",
+            },
+
+            {
+                en: "Bigha",
+                te: "బీఘా",
+                hi: "बीघा",
+                kn: "ಬೀಗಾ",
+                ta: "பீகா",
+                mr: "बिघा",
+                gu: "બીઘા",
+            },
+    ],
+},
+
+{
+    id: "farm_Tarea",
+    section: "farm",
+    field: "farm.Tarea",
+
+    question: {
+        en: "What is the total area of your farm?",
+        te: "మీ వ్యవసాయ క్షేత్రం మొత్తం విస్తీర్ణం ఎంత?",
+        hi: "आपके खेत का कुल क्षेत्रफल कितना है?",
+        kn: "ನಿಮ್ಮ ಜಮೀನಿನ ಒಟ್ಟು ವಿಸ್ತೀರ್ಣ ಎಷ್ಟು?",
+        ta: "உங்கள் பண்ணையின் மொத்த பரப்பளவு எவ்வளவு?",
+        mr: "तुमच्या शेताचे एकूण क्षेत्रफळ किती आहे?",
+        gu: "તમારા ખેતરનો કુલ વિસ્તાર કેટલો છે?",
     },
 
-    {
-        id: "farm_watersrc",
-        section: "farm",
-        field: "farm.watersrc",
-        question: "How do you water your farm?",
-        type: "text",
-        required : true,
+    placeholder: {
+        en: "Enter total area",
+        te: "మొత్తం విస్తీర్ణాన్ని నమోదు చేయండి",
+        hi: "कुल क्षेत्रफल दर्ज करें",
+        kn: "ಒಟ್ಟು ವಿಸ್ತೀರ್ಣವನ್ನು ನಮೂದಿಸಿ",
+        ta: "மொத்த பரப்பளவை உள்ளிடவும்",
+        mr: "एकूण क्षेत्रफळ प्रविष्ट करा",
+        gu: "કુલ વિસ્તાર દાખલ કરો",
     },
 
-    {
-        id: "farm_soil",
-        section: "farm",
-        field: "farm.soil",
-        question: "What type of soil is present in your farm?",
-        type: "text",
-        required : true,
+    type: "number",
+    required: true,
+    min: 0.5,
+
+},
+
+ {
+    id: "farm_Uarea",
+    section: "farm",
+    field: "farm.Uarea",
+
+    question: {
+        en: "How much of the farm is currently being used?",
+        te: "ప్రస్తుతం వ్యవసాయానికి ఎంత విస్తీర్ణం ఉపయోగిస్తున్నారు?",
+        hi: "वर्तमान में खेत का कितना क्षेत्र उपयोग में है?",
+        kn: "ಪ್ರಸ್ತುತ ಜಮೀನಿನ ಎಷ್ಟು ಭಾಗವನ್ನು ಬಳಸಲಾಗುತ್ತಿದೆ?",
+        ta: "தற்போது பண்ணையின் எவ்வளவு பரப்பளவு பயன்படுத்தப்படுகிறது?",
+        mr: "सध्या शेतातील किती क्षेत्र वापरात आहे?",
+        gu: "હાલમાં ખેતરનો કેટલો વિસ્તાર ઉપયોગમાં છે?",
     },
 
-    {
-        id: "farm_blockCount",
-        section: "farm",
-        field: "farm.blockCount",
-        question: "How many blocks are present in your farm?",
-        type: "number",
-        required : true,
-        min : 1,
-        max : 20,
+    placeholder: {
+        en: "Enter used area",
+        te: "ఉపయోగిస్తున్న విస్తీర్ణాన్ని నమోదు చేయండి",
+        hi: "उपयोग में क्षेत्रफल दर्ज करें",
+        kn: "ಬಳಕೆಯಲ್ಲಿರುವ ವಿಸ್ತೀರ್ಣವನ್ನು ನಮೂದಿಸಿ",
+        ta: "பயன்பாட்டில் உள்ள பரப்பளவை உள்ளிடவும்",
+        mr: "वापरातील क्षेत्रफळ प्रविष्ट करा",
+        gu: "ઉપયોગમાં રહેલો વિસ્તાર દાખલ કરો",
     },
 
-    {
-        id : "farm_photo",
-        section : "farm",
-        field : "farm.photo",
-        question : "Capture photo of the farm",
-        type : "image",
-        required : true,
+    type: "number",
+    required: true,
+    min: 0.5,
+},
+
+{
+    id: "farm_type",
+    section: "farm",
+    field: "farm.type",
+
+    question: {
+        en: "What type of farming do you practice?",
+        te: "మీరు ఏ విధమైన వ్యవసాయం చేస్తారు?",
+        hi: "आप किस प्रकार की खेती करते हैं?",
+        kn: "ನೀವು ಯಾವ ರೀತಿಯ ಕೃಷಿ ಮಾಡುತ್ತೀರಿ?",
+        ta: "நீங்கள் எந்த வகையான விவசாயம் செய்கிறீர்கள்?",
+        mr: "तुम्ही कोणत्या प्रकारची शेती करता?",
+        gu: "તમે કયા પ્રકારની ખેતી કરો છો?",
     },
+
+    type: "select",
+    required: true,
+
+    options: [
+            {
+                en: "Crop",
+                te: "పంట",
+                hi: "फसल",
+                kn: "ಬೆಳೆ",
+                ta: "பயிர்",
+                mr: "पीक",
+                gu: "પાક",
+            },
+        
+            {
+                en: "Horticulture",
+                te: "తోటల సాగు",
+                hi: "बागवानी",
+                kn: "ತೋಟಗಾರಿಕೆ",
+                ta: "தோட்டக்கலை",
+                mr: "बागायती",
+                gu: "બાગાયતી",
+            },
+            {   
+                en: "Mixed",
+                te: "మిశ్రమ వ్యవసాయం",
+                hi: "मिश्रित खेती",
+                kn: "ಮಿಶ್ರ ಕೃಷಿ",
+                ta: "கலப்பு விவசாயம்",
+                mr: "मिश्र शेती",
+                gu: "મિશ્ર ખેતી",
+            },
+
+            {
+                en: "Organic",
+                te: "సేంద్రీయ వ్యవసాయం",
+                hi: "जैविक खेती",
+                kn: "ಸಾವಯವ ಕೃಷಿ",
+                ta: "இயற்கை விவசாயம்",
+                mr: "सेंद्रिय शेती",
+                gu: "સજીવ ખેતી",
+            },
+    ],
+},
+
+{
+    id: "farm_watersrc",
+    section: "farm",
+    field: "farm.watersrc",
+
+    question: {
+        en: "What is the source of water for your farm?",
+        te: "మీ వ్యవసాయ క్షేత్రానికి నీటి వనరు ఏమిటి?",
+        hi: "आपके खेत के लिए पानी का स्रोत क्या है?",
+        kn: "ನಿಮ್ಮ ಜಮೀನಿನ ನೀರಿನ ಮೂಲ ಯಾವುದು?",
+        ta: "உங்கள் பண்ணைக்கான நீர் ஆதாரம் என்ன?",
+        mr: "तुमच्या शेतासाठी पाण्याचा स्रोत कोणता आहे?",
+        gu: "તમારા ખેતર માટે પાણીનો સ્ત્રોત શું છે?",
+    },
+
+    placeholder: {
+        en: "Enter water source",
+        te: "నీటి వనరును నమోదు చేయండి",
+        hi: "पानी का स्रोत दर्ज करें",
+        kn: "ನೀರಿನ ಮೂಲವನ್ನು ನಮೂದಿಸಿ",
+        ta: "நீர் ஆதாரத்தை உள்ளிடவும்",
+        mr: "पाण्याचा स्रोत प्रविष्ट करा",
+        gu: "પાણીનો સ્ત્રોત દાખલ કરો",
+    },
+
+    type: "select",
+    required: true,
+
+    options: [
+        {
+            en: "Borewell",
+            te: "బోర్‌వెల్",
+            hi: "बोरवेल",
+            kn: "ಬೋರ್‌ವೆಲ್",
+            ta: "ஆழ்கிணறு",
+            mr: "बोअरवेल",
+            gu: "બોરવેલ",
+        },
+
+        {
+            en: "Open Well",
+            te: "బావి",
+            hi: "खुला कुआँ",
+            kn: "ತೆರೆದ ಬಾವಿ",
+            ta: "திறந்த கிணறு",
+            mr: "उघडी विहीर",
+            gu: "ખુલ્લો કૂવો",
+        },
+ 
+        {
+            en: "Canal",
+            te: "కాలువ",
+            hi: "नहर",
+            kn: "ಕಾಲುವೆ",
+            ta: "கால்வாய்",
+            mr: "कालवा",
+            gu: "કેનાલ",
+        },
+
+        {
+            en: "River",
+            te: "నది",
+            hi: "नदी",
+            kn: "ನದಿ",
+            ta: "ஆறு",
+            mr: "नदी",
+            gu: "નદી",
+        },
+    
+        {   
+            en: "Pond",
+            te: "చెరువు",
+            hi: "तालाब",
+            kn: "ಕೆರೆ",
+            ta: "குளம்",
+            mr: "तलाव",
+            gu: "તળાવ",
+        },
+
+        {
+            en: "Rainwater",
+            te: "వర్షపు నీరు",
+            hi: "वर्षा जल",
+            kn: "ಮಳೆನೀರು",
+            ta: "மழைநீர்",
+            mr: "पावसाचे पाणी",
+            gu: "વરસાદી પાણી",
+        },
+
+        {
+            en: "Municipal Supply",
+            te: "మున్సిపల్ నీటి సరఫరా",
+            hi: "नगरपालिका जल आपूर्ति",
+            kn: "ನಗರಸಭೆ ನೀರು ಸರಬರಾಜು",
+            ta: "நகராட்சி நீர் வழங்கல்",
+            mr: "महानगरपालिका पाणीपुरवठा",
+            gu: "નગરપાલિકાનો પાણી પુરવઠો",
+        },
+
+        {
+            en: "Other",
+            te: "ఇతర",
+            hi: "अन्य",
+            kn: "ಇತರೆ",
+            ta: "மற்றவை",
+            mr: "इतर",
+            gu: "અન્ય",
+        },
+],
+},
+
+{
+    id: "farm_soil",
+    section: "farm",
+    field: "farm.soil",
+
+    question: {
+        en: "What type of soil is present on your farm?",
+        te: "మీ వ్యవసాయ క్షేత్రంలో ఏ రకమైన నేల ఉంది?",
+        hi: "आपके खेत में किस प्रकार की मिट्टी है?",
+        kn: "ನಿಮ್ಮ ಜಮೀನಿನಲ್ಲಿ ಯಾವ ರೀತಿಯ ಮಣ್ಣು ಇದೆ?",
+        ta: "உங்கள் பண்ணையில் எந்த வகை மண் உள்ளது?",
+        mr: "तुमच्या शेतात कोणत्या प्रकारची माती आहे?",
+        gu: "તમારા ખેતરમાં કઈ પ્રકારની જમીન છે?",
+    },
+
+    placeholder: {
+        en: "Enter soil type",
+        te: "నేల రకాన్ని నమోదు చేయండి",
+        hi: "मिट्टी का प्रकार दर्ज करें",
+        kn: "ಮಣ್ಣಿನ ಪ್ರಕಾರವನ್ನು ನಮೂದಿಸಿ",
+        ta: "மண்ணின் வகையை உள்ளிடவும்",
+        mr: "मातीचा प्रकार प्रविष्ट करा",
+        gu: "જમીનનો પ્રકાર દાખલ કરો",
+    },
+
+    type: "text",
+    required: true,
+},
+
+{
+    id: "farm_blockCount",
+    section: "farm",
+    field: "farm.blockCount",
+
+    question: {
+        en: "How many blocks are there on your farm?",
+        te: "మీ వ్యవసాయ క్షేత్రంలో ఎన్ని బ్లాక్‌లు ఉన్నాయి?",
+        hi: "आपके खेत में कितने ब्लॉक हैं?",
+        kn: "ನಿಮ್ಮ ಜಮೀನಿನಲ್ಲಿ ಎಷ್ಟು ಬ್ಲಾಕ್‌ಗಳಿವೆ?",
+        ta: "உங்கள் பண்ணையில் எத்தனை பகுதிகள் உள்ளன?",
+        mr: "तुमच्या शेतात किती ब्लॉक आहेत?",
+        gu: "તમારા ખેતરમાં કેટલા બ્લોક છે?",
+    },
+
+    placeholder: {
+        en: "Enter number of blocks",
+        te: "బ్లాక్‌ల సంఖ్యను నమోదు చేయండి",
+        hi: "ब्लॉकों की संख्या दर्ज करें",
+        kn: "ಬ್ಲಾಕ್‌ಗಳ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+        ta: "பகுதிகளின் எண்ணிக்கையை உள்ளிடவும்",
+        mr: "ब्लॉकची संख्या प्रविष्ट करा",
+        gu: "બ્લોકની સંખ્યા દાખલ કરો",
+    },
+
+    type: "number",
+    required: true,
+    min: 1,
+    max: 20,
+},
+
+{
+    id: "farm_photo",
+    section: "farm",
+    field: "farm.photo",
+
+    question: {
+        en: "Capture a photo of the farm",
+        te: "వ్యవసాయ క్షేత్రం ఫోటో తీయండి",
+        hi: "खेत की फोटो लें",
+        kn: "ಜಮೀನಿನ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ",
+        ta: "பண்ணையின் புகைப்படத்தை எடுக்கவும்",
+        mr: "शेताचा फोटो काढा",
+        gu: "ખેતરનો ફોટો લો",
+    },
+
+    type: "image",
+    required: true,
+},
 ]

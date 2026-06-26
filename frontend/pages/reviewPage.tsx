@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useInterviewStore } from "../state/interviewStore";
 import ReviewCard from "../components/review/reviewCard";
 import EditableReviewRow from "../components/review/editableRow";
-import { saveSession } from "../services/sessionService";
+import { saveSession, submitFarmer } from "../services/sessionService";
 
 export default function ReviewPage() {
   const { responses, questions, sessionId } = useInterviewStore((state) => ({
@@ -14,7 +14,22 @@ export default function ReviewPage() {
 
   const navigate = useNavigate();
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const handleRowSave = () => undefined;
+
+  const handleSubmit = async () => {
+    try {
+      setSubmitting(true);
+      const result = await submitFarmer(sessionId);
+      navigate("/success", {
+        state: { submissionId: result.farmerId },
+      });
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit farmer");
+      setSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     if (!sessionId) {
@@ -267,12 +282,13 @@ export default function ReviewPage() {
             p-5
             mt-8
             flex
-            justify-between
+            justify-center
           "
         >
 
           <button
-            onClick={() => navigate("/preview")}
+            onClick={handleSubmit}
+            disabled={submitting}
             className="
               px-6
               py-3
@@ -281,10 +297,11 @@ export default function ReviewPage() {
               text-white
               font-medium
               hover:bg-blue-700
+              disabled:bg-slate-400
               transition
             "
           >
-            Continue
+            {submitting ? "Submitting..." : "Submit"}
           </button>
         </div>
 
