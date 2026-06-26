@@ -19,8 +19,6 @@ export interface Question {
   field: string;
   question: Translation; // Main interview question
   placeholder?: Translation; // Input placeholder
-  helperText?: Translation;// Helper text shown below the question
-  ttsText?: Translation;// Text used for TTS (can differ from UI question)
   type: QuestionType;
   required: boolean;
 
