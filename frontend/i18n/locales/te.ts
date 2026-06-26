@@ -46,11 +46,19 @@ const te = {
     startInterview: "ఇంటర్వ్యూను ప్రారంభించండి"
   },
 
+  sections: {
+    farmer: "రైతు వివరాలు",
+    farm: "వ్యవసాయ క్షేత్ర వివరాలు",
+    block: "బ్లాక్ వివరాలు",
+    review: "సమీక్ష",
+  },
+
   interview: {
     title: "ఇంటర్వ్యూ",
     question: "ప్రశ్న",
     questionOf: "ప్రశ్న {{current}} / {{total}}",
     percentComplete: "{{percent}}% పూర్తైంది",
+    answerLabel: "మీ సమాధానం",
 
     repeatQuestion: "ప్రశ్నను మళ్లీ వినండి",
     review: "సమాధానాలను సమీక్షించండి",

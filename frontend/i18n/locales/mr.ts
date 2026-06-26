@@ -46,11 +46,19 @@ const mr = {
     startInterview: "मुलाखत सुरू करा"
   },
 
+  sections: {
+    farmer: "शेतकरी तपशील",
+    farm: "शेताचा तपशील",
+    block: "ब्लॉक तपशील",
+    review: "पुनरावलोकन",
+  },
+
   interview: {
     title: "मुलाखत",
     question: "प्रश्न",
     questionOf: "प्रश्न {{current}} / {{total}}",
     percentComplete: "{{percent}}% प्रश्न",
+    answerLabel: "तुमचे उत्तर",
 
     repeatQuestion: "प्रश्न पुन्हा ऐका",
     review: "उत्तरांचे पुनरावलोकन करा",

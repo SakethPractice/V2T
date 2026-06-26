@@ -46,11 +46,19 @@ const hi = {
     startInterview: "साक्षात्कार प्रारंभ करें"
   },
 
+  sections: {
+    farmer: "किसान विवरण",
+    farm: "खेत का विवरण",
+    block: "ब्लॉक विवरण",
+    review: "समीक्षा",
+  },
+
   interview: {
     title: "साक्षात्कार",
     question: "प्रश्न",
     questionOf: " {{current}} / {{total}}",
     percentComplete: "{{percent}}% प्रश्न",
+    answerLabel: "आपका उत्तर",
 
     repeatQuestion: "प्रश्न दोबारा सुनें",
     review: "उत्तर की समीक्षा करें",

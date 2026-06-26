@@ -46,11 +46,19 @@ const en = {
     startInterview: "Start Interview"
   },
 
+  sections: {
+    farmer: "Farmer Details",
+    farm: "Farm Details",
+    block: "Block Details",
+    review: "Review",
+  },
+
   interview: {
     title: "Interview",
     question: "Question",
     questionOf: "Question {{current}} of {{total}}",
     percentComplete: "{{percent}}% Complete",
+    answerLabel: "Your Answer",
     
     repeatQuestion: "Repeat Question",
     review: "Review Answers",

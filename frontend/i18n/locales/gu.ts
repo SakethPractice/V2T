@@ -45,12 +45,20 @@ const gu = {
 
     startInterview: "મુલાકાત શરૂ કરો"
   },
+  
+  sections: {
+    farmer: "ખેડૂતની વિગતો",
+    farm: "ખેતરની વિગતો",
+    block: "બ્લોકની વિગતો",
+    review: "સમીક્ષા",
+  },
 
   interview: {
     title: "મુલાકાત",
     question: "પ્રશ્ન",
     questionOf: "પ્રશ્ન {{current}} / {{total}}",
     percentComplete: "{{percent}}% પ્રશ્ન",
+    answerLabel: "તમારો જવાબ",
 
     repeatQuestion: "પ્રશ્ન ફરી સાંભળો",
     review: "જવાબોની સમીક્ષા કરો",

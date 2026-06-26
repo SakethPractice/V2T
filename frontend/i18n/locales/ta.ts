@@ -46,11 +46,19 @@ const ta = {
     startInterview: "நேர்காணலை தொடங்கவும்"
   },
 
+  sections: {
+    farmer: "விவசாயி விவரங்கள்",
+    farm: "பண்ணை விவரங்கள்",
+    block: "பகுதி விவரங்கள்",
+    review: "மதிப்பாய்வு",
+  },
+
   interview: {
     title: "நேர்காணல்",
     question: "கேள்வி",
     questionOf: "கேள்வி {{current}} / {{total}}",
     percentComplete: "{{percent}}% முடிந்தது",
+    answerLabel: "உங்கள் பதில்",
 
     repeatQuestion: "கேள்வியை மீண்டும் கேளுங்கள்",
     review: "பதில்களை மதிப்பாய்வு செய்யவும்",

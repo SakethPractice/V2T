@@ -46,11 +46,19 @@ const kn = {
     startInterview: "ಸಂದರ್ಶನ ಪ್ರಾರಂಭಿಸಿ"
   },
 
+  sections: {
+    farmer: "ರೈತರ ವಿವರಗಳು",
+    farm: "ಕೃಷಿ ಜಮೀನಿನ ವಿವರಗಳು",
+    block: "ಬ್ಲಾಕ್ ವಿವರಗಳು",
+    review: "ಪರಿಶೀಲನೆ",
+  },
+
   interview: {
     title: "ಸಂದರ್ಶನ",
     question: "ಪ್ರಶ್ನೆ",
     questionOf: "ಪ್ರಶ್ನೆ {{current}} / {{total}}",
     percentComplete: "{{percent}}% ಪೂರ್ಣಗೊಂಡಿದೆ",
+    answerLabel: "ನಿಮ್ಮ ಉತ್ತರ",
 
     repeatQuestion: "ಪ್ರಶ್ನೆಯನ್ನು ಮತ್ತೆ ಕೇಳಿ",
     review: "ಉತ್ತರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ",
