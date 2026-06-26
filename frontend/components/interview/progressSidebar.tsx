@@ -98,7 +98,7 @@ export default function ProgressSidebar() {
             {t("common.progress")}
           </h2>
           <p className="text-sm text-slate-500 mt-1">
-            {t("common.questionOf", {
+            {t("interview.questionOf", {
             current: currentQuestionIndex + 1,
             total: questions.length,
             })}
@@ -114,7 +114,7 @@ export default function ProgressSidebar() {
             />
           </div>
           <p className="text-sm font-medium text-slate-600">
-            {t("common.percentComplete", {
+            {t("interview.percentComplete", {
               percent: completionPercentage,
             })}
           </p>
@@ -150,7 +150,7 @@ export default function ProgressSidebar() {
                     ${getTextColor(section.status)}
                   `}
                 >
-                  {section.label}
+                  {t(`sections.${section.section}`)}
                 </p>
                 <p className="text-xs text-slate-500 mt-0.5">
                   {section.status === "completed" &&
