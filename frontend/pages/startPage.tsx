@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { startSession } from "../services/sessionService";
 import { useInterviewStore } from "../state/interviewStore";
+import { hydrateInterviewSession } from "../utils/sessionHydration";
 
 export default function StartPage() {
   const [phone, setPhone] = useState("");
@@ -23,37 +24,35 @@ export default function StartPage() {
 
     const store = useInterviewStore.getState();
     store.resetInterview();
-
-    store.setSessionId(
-      result.session.sessionId
-    );
+    localStorage.setItem("sessionId", result.session.sessionId);
 
     if (result.resume) {
-      store.setResponses(
-        result.session.responses
+      const { questions, resumeQuestionId } = hydrateInterviewSession(
+        result.session
       );
 
-      // Restore phone from the saved session so the
-      // mobile_num question is pre-filled on draft resume.
-      store.setPhone(
-        result.session.phone
-      );
+      store.setQuestions(questions);
 
-      // Tell the interview page which question to jump to.
-      store.setResumeQuestionId(
-        result.session.currentQuestionId
-      );
+      if (resumeQuestionId) {
+        const resumeIndex = questions.findIndex(
+          (question) => question.field === resumeQuestionId
+        );
+
+        if (resumeIndex !== -1) {
+          store.goToQuestion(resumeIndex);
+        }
+      }
 
       setLoading(false);
       navigate("/interview");
       return;
-    } else {
-      // Fresh session — store the phone the user just typed.
-      store.setPhone(phone);
     }
 
-    setLoading(false);
+    // Fresh session: keep the typed phone locally until language is chosen.
+    store.setSessionId(result.session.sessionId);
+    store.setPhone(phone);
 
+    setLoading(false);
     navigate("/language");
   } catch (error) {
     console.error(error);

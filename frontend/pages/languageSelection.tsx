@@ -1,15 +1,40 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useInterviewStore } from "../state/interviewStore";
 import { useLanguage } from "../hooks/useLanguage";
 import { LANGUAGE_OPTIONS } from "../constants/languageSelect";
+import { updateSessionLanguage } from "../services/sessionService";
+import type { LanguageCode } from "../types/language";
 
 export default function LanguageSelection() {
   const navigate = useNavigate();
+  const [savingLanguage, setSavingLanguage] = useState(false);
   const resumeQuestionId = useInterviewStore(
     (state) => state.resumeQuestionId
   );
+  const sessionId = useInterviewStore((state) => state.sessionId);
 
   const { language, setLanguage } = useLanguage();
+
+  const handleLanguageSelect = async (langCode: LanguageCode) => {
+    const activeSessionId = sessionId || localStorage.getItem("sessionId") || "";
+
+    if (!activeSessionId) {
+      alert("Session not found. Please restart the interview.");
+      return;
+    }
+
+    try {
+      setSavingLanguage(true);
+      await updateSessionLanguage(activeSessionId, langCode);
+      setLanguage(langCode);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to save language. Please try again.");
+    } finally {
+      setSavingLanguage(false);
+    }
+  };
 
   const handleContinue = () => {
     navigate(
@@ -36,7 +61,8 @@ export default function LanguageSelection() {
           {LANGUAGE_OPTIONS.map((lang) => (
             <button
               key={lang.code}
-              onClick={() => setLanguage(lang.code)}
+              onClick={() => handleLanguageSelect(lang.code)}
+              disabled={savingLanguage}
               className={`
                 w-full
                 p-4
@@ -44,6 +70,8 @@ export default function LanguageSelection() {
                 border-2
                 text-left
                 transition-all
+                disabled:opacity-60
+                disabled:cursor-not-allowed
 
                 ${
                   language === lang.code
@@ -67,6 +95,7 @@ export default function LanguageSelection() {
 
         <button
           onClick={handleContinue}
+          disabled={savingLanguage}
           className="
             w-full
             bg-blue-600
@@ -76,6 +105,8 @@ export default function LanguageSelection() {
             font-medium
             hover:bg-blue-700
             transition
+            disabled:opacity-60
+            disabled:cursor-not-allowed
           "
         >
           Continue

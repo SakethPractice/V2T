@@ -20,7 +20,6 @@ export interface Question {
   question: Translation; // Main interview question
   placeholder?: Translation; // Input placeholder
   type: QuestionType;
-  required: boolean;
 
   options?: Translation[];
 

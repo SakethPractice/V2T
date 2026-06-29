@@ -99,11 +99,11 @@ export default function ReviewPage() {
           />
 
           <EditableReviewRow
-            label="Date of Birth"
-            value={responses?.farmer?.DOB ?? ""}
+            label="Age"
+            value={responses?.farmer?.age ?? ""}
             section="farmer"
-            field="farmer.DOB"
-            question={getQuestionForField("farmer.DOB")}
+            field="farmer.age"
+            question={getQuestionForField("farmer.age")}
             onSave={handleRowSave}
           />
 
@@ -179,15 +179,6 @@ export default function ReviewPage() {
             section="farm"
             field="farm.Uarea"
             question={getQuestionForField("farm.Uarea")}
-            onSave={handleRowSave}
-          />
-
-          <EditableReviewRow
-            label="Unit"
-            value={responses?.farm?.unit ?? ""}
-            section="farm"
-            field="farm.unit"
-            question={getQuestionForField("farm.unit")}
             onSave={handleRowSave}
           />
 
@@ -285,6 +276,13 @@ export default function ReviewPage() {
             justify-center
           "
         >
+          
+          <button
+            onClick={() => navigate("/interview")}
+            className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors -translate-x-8"
+          >
+            ← Back to Onboarding
+          </button>
 
           <button
             onClick={handleSubmit}

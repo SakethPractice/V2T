@@ -1,22 +1,29 @@
 export interface FarmerResponse {
   name?: string;
-  DOB?: string;
+  age?: number;
   gender?: string;
   mobile_num?: string;
-  village?: string;
-  pincode?: string;
+  address: string;
+  village: string;
+  taluk : string;
+  district: string;
+  state: string;
+  pincode: string;
   photo?: string;
 }
 
 export interface FarmResponse {
   name?: string;
   address?: string;
+  village?: string;
+  taluk?: string;
+  state?: string;
+  pincode?: string;
+  district?: string;
   Tarea?: number;
   Uarea?: number;
-  unit?: string;
-  type?: string;
+  farmingType?: string;
   watersrc?: string;
-  soil?: string;
   blockCount?: number;
   photo?: string;
 }
@@ -26,7 +33,7 @@ export interface BlockResponse {
   name?: string;
   area?: number;
   farmingType?: string;
-  watersrc?: string;
+  soil?: string;
 }
 
 export interface InterviewResponses {

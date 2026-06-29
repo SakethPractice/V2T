@@ -28,37 +28,34 @@ export const farmerQuestions: Question[] = [
     },
 
     type: "text",
-    required: true,
-    minLength: 1,
 },
 
 {
-    id: "DOB",
+    id: "age",
     section: "farmer",
-    field: "farmer.DOB",
+    field: "farmer.age",
 
     question: {
-        en: "What is your date of birth?",
-        te: "మీ జన్మ తేదీ ఏమిటి?",
-        hi: "आपकी जन्म तिथि क्या है?",
-        kn: "ನಿಮ್ಮ ಜನ್ಮ ದಿನಾಂಕ ಏನು?",
-        ta: "உங்கள் பிறந்த தேதி என்ன?",
-        mr: "तुमची जन्मतारीख काय आहे?",
-        gu: "તમારી જન્મ તારીખ શું છે?",
+        en: "What is your age?",
+        te: "మీ వయస్సు ఎంత?",
+        hi: "आपकी आयु क्या है?",
+        kn: "ನಿಮ್ಮ ವಯಸ್ಸು ಎಷ್ಟು?",
+        ta: "உங்கள் வயது என்ன?",
+        mr: "तुमचे वय किती आहे?",
+        gu: "તમારી ઉંમર કેટલી છે?",
     },
 
     placeholder: {
-        en: "Select date",
-        te: "తేదీని ఎంచుకోండి",
-        hi: "तिथि चुनें",
-        kn: "ದಿನಾಂಕವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
-        ta: "தேதியைத் தேர்ந்தெடுக்கவும்",
-        mr: "तारीख निवडा",
-        gu: "તારીખ પસંદ કરો",
+        en: "Enter age",
+        te: "వయస్సును నమోదు చేయండి",
+        hi: "आयु दर्ज करें",
+        kn: "ವಯಸ್ಸನ್ನು ನಮೂದಿಸಿ",
+        ta: "வயதை உள்ளிடவும்",
+        mr: "वय प्रविष्ट करा",
+        gu: "ઉંમર દાખલ કરો",
     },
 
-    type: "date",
-    required: true,
+    type: "number",
 },
 
 {
@@ -77,7 +74,6 @@ export const farmerQuestions: Question[] = [
     },
 
     type: "select",
-    required: true,
 
     options: [
             {
@@ -137,7 +133,6 @@ export const farmerQuestions: Question[] = [
     },
 
     type: "text",
-    required: true,
     minLength: 10,
     maxLength: 10,
     pattern: /^[6-9]\d{9}$/,
@@ -170,8 +165,6 @@ export const farmerQuestions: Question[] = [
     },
 
     type: "text",
-    required: true,
-    minLength: 2,
 },
 /*
     {
@@ -180,7 +173,6 @@ export const farmerQuestions: Question[] = [
         field: "farmer.pincode",
         question: "What is your village pincode?",
         type: "text",
-        required : true,
         minLength : 6,
         maxLength : 6,
         pattern : /^[1-9][0-9]{5}$/,
@@ -203,6 +195,5 @@ export const farmerQuestions: Question[] = [
     },
 
     type: "image",
-    required: true,
 },
 ];

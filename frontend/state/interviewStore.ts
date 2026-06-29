@@ -80,6 +80,8 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
 
     resetInterview: () =>
     set({
+        selectedLanguage: "en",
+        sessionId: "",
         currentQuestionIndex: 0,
 
         phone:"",

@@ -34,7 +34,9 @@ const en = {
 
   instructions: {
     title: "Instructions",
-
+    consentTitle: "Consent",
+    consentStatement:"I agree to share my personal information, including my name, mobile number, address, and photograph, with Farmitopia for the purpose of farmer registration and related services.",
+    consentCheckbox: "I have read and agree to the above consent statement.",
     steps: [
       "Answer all questions carefully.",
       "You may answer using voice or manual input.",

@@ -1,14 +1,25 @@
 import { CheckCircle, Clock3, Circle } from "lucide-react";
 import { useInterviewStore } from "../../state/interviewStore";
-import {
-  getSectionStatuses,
-  getCompletionPercentage,
-} from "../../utils/progressHelpers";
+import { getSectionStatuses,getCompletionPercentage } from "../../utils/progressHelpers";
 import { useTranslation } from "../../hooks/useTranslation";
+import { saveSession } from "../../services/sessionService";
+import { useLanguage } from "../../hooks/useLanguage";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ProgressSidebar() {
-  const { questions, responses, currentQuestionIndex, goToQuestion } =
-    useInterviewStore();
+  const {
+  questions,
+  responses,
+  currentQuestionIndex,
+  goToQuestion,
+  sessionId,
+} = useInterviewStore();
+
+  const [saving, setSaving] = useState(false);
+
+  const navigate = useNavigate();
+  const { language } = useLanguage();
 
   const sectionStatuses = getSectionStatuses(
     questions,
@@ -29,6 +40,28 @@ export default function ProgressSidebar() {
       goToQuestion(section.firstQuestionIndex);
     }
   };
+
+  const handleSaveDraft = async () => {
+  if (!sessionId) return;
+
+  try {
+    setSaving(true);
+
+    await saveSession(
+      sessionId,
+      responses,
+      questions[currentQuestionIndex].id,
+      language,
+    );
+
+    alert("Draft saved successfully!");
+  } catch (error) {
+    console.error(error);
+    alert("Failed to save draft.");
+  } finally {
+    setSaving(false);
+  }
+};
 
   const getStatusIcon = (status: typeof sectionStatuses[0]["status"]) => {
     switch (status) {
@@ -168,6 +201,25 @@ export default function ProgressSidebar() {
               </div>
             </button>
           ))}
+        </div>
+
+        <div className="pt-2">
+        <button
+          onClick={handleSaveDraft}
+          disabled={saving}
+          className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {saving ? "Saving..." : "Save"}
+        </button>
+        </div>
+
+        <div className="pt-3">
+          <button
+            onClick={() => navigate("/review")}
+            className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+          >
+            Review
+          </button>
         </div>
 
         {/* Info Box */}
