@@ -33,7 +33,6 @@ export const generateBlockQuestions = (
         },
 
         type: "text",
-        required: true,
         minLength: 1,
       },
 
@@ -63,7 +62,6 @@ export const generateBlockQuestions = (
         },
 
         type: "number",
-        required: true,
         min: 0.5,
       },
 
@@ -83,7 +81,6 @@ export const generateBlockQuestions = (
         },
 
         type: "select",
-        required: true,
 
         options: [
           {
@@ -141,7 +138,6 @@ export const generateBlockQuestions = (
         },
 
         type: "select",
-        required: true,
 
         options: [
           {

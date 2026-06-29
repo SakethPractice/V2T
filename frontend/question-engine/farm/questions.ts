@@ -27,8 +27,6 @@ export const farmQuestions: Question[] = [
     },
 
     type: "text",
-    required: true,
-    minLength: 1,
 },
 
 {
@@ -57,10 +55,8 @@ export const farmQuestions: Question[] = [
     },
 
     type: "text",
-    required: true,
-    minLength: 4,
 },
-
+/*
 {
     id: "farm_area_unit",
     section: "farm",
@@ -77,7 +73,6 @@ export const farmQuestions: Question[] = [
     },
 
     type: "select",
-    required: true,
 
     options: [
             {
@@ -131,7 +126,7 @@ export const farmQuestions: Question[] = [
             },
     ],
 },
-
+*/
 {
     id: "farm_Tarea",
     section: "farm",
@@ -158,8 +153,6 @@ export const farmQuestions: Question[] = [
     },
 
     type: "number",
-    required: true,
-    min: 0.5,
 
 },
 
@@ -189,8 +182,6 @@ export const farmQuestions: Question[] = [
     },
 
     type: "number",
-    required: true,
-    min: 0.5,
 },
 
 {
@@ -209,7 +200,6 @@ export const farmQuestions: Question[] = [
     },
 
     type: "select",
-    required: true,
 
     options: [
             {
@@ -279,7 +269,6 @@ export const farmQuestions: Question[] = [
     },
 
     type: "select",
-    required: true,
 
     options: [
         {
@@ -390,7 +379,6 @@ export const farmQuestions: Question[] = [
     },
 
     type: "text",
-    required: true,
 },
 
 {
@@ -419,8 +407,7 @@ export const farmQuestions: Question[] = [
     },
 
     type: "number",
-    required: true,
-    min: 1,
+    min: 0,
     max: 20,
 },
 
@@ -440,6 +427,5 @@ export const farmQuestions: Question[] = [
     },
 
     type: "image",
-    required: true,
 },
 ]
