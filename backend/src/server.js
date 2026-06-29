@@ -1,9 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import connectDB from "./config/db.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
-import farmerRoutes from "./routes/farmerRoutes.js"; // ← NEW
-import cors from "cors";
+import farmerRoutes from "./routes/farmerRoutes.js";
+import ttsRoutes from "./routes/ttsRoutes.js";
 
 dotenv.config();
 
@@ -11,11 +12,13 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
 app.use(express.json());
 
+app.use(cors());
+
 app.use("/api/sessions", sessionRoutes);
-app.use("/api/farmers", farmerRoutes); // ← NEW
+app.use("/api/farmers", farmerRoutes);
+app.use("/api/tts", ttsRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running");
