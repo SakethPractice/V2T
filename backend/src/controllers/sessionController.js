@@ -102,7 +102,7 @@ export const saveAnswer = async (req, res) => {
 
 export const saveSession = async (req, res) => {
   try {
-    const { sessionId, responses, currentQuestionId } = req.body;
+    const { sessionId, responses, currentQuestionId, language, } = req.body;
 
     const session = await InterviewSession.findOne({ sessionId });
 
@@ -126,6 +126,9 @@ export const saveSession = async (req, res) => {
     session.markModified("responses");
 
     session.currentQuestionId = currentQuestionId;
+    if (typeof language === "string" && language.length > 0) {
+      session.language = language;
+    }
     session.lastSavedAt = new Date();
 
     await session.save();
@@ -140,6 +143,50 @@ export const saveSession = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to save draft",
+    });
+  }
+};
+
+export const updateLanguage = async (req, res) => {
+  try {
+    const { sessionId, language } = req.body || {};
+
+    if (!sessionId) {
+      return res.status(400).json({
+        message: "Session ID is required",
+      });
+    }
+
+    if (typeof language !== "string" || !language.trim()) {
+      return res.status(400).json({
+        message: "Language is required",
+      });
+    }
+
+    const session = await InterviewSession.findOne({ sessionId });
+
+    if (!session) {
+      return res.status(404).json({
+        message: "Session not found",
+      });
+    }
+
+    session.language = language;
+    session.lastSavedAt = new Date();
+
+    await session.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Language updated",
+      session,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update language",
     });
   }
 };

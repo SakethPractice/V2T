@@ -3,6 +3,7 @@ import { useInterviewStore } from "../../state/interviewStore";
 import { getSectionStatuses,getCompletionPercentage } from "../../utils/progressHelpers";
 import { useTranslation } from "../../hooks/useTranslation";
 import { saveSession } from "../../services/sessionService";
+import { useLanguage } from "../../hooks/useLanguage";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -18,6 +19,7 @@ export default function ProgressSidebar() {
   const [saving, setSaving] = useState(false);
 
   const navigate = useNavigate();
+  const { language } = useLanguage();
 
   const sectionStatuses = getSectionStatuses(
     questions,
@@ -48,7 +50,8 @@ export default function ProgressSidebar() {
     await saveSession(
       sessionId,
       responses,
-      questions[currentQuestionIndex].id
+      questions[currentQuestionIndex].id,
+      language,
     );
 
     alert("Draft saved successfully!");

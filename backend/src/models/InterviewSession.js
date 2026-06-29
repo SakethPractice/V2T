@@ -18,6 +18,11 @@ const InterviewSessionSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    
+    language: {
+      type: String,
+      default: "en",
+    },
 
     status: {
       type: String,
