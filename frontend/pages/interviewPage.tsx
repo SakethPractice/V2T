@@ -1,12 +1,13 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { initializeInterview } from "../question-engine/engine/interviewEngine";
 import { fetchPincode } from "../services/pincodeService";
 import { useInterviewStore } from "../state/interviewStore";
 import { useLanguage } from "../hooks/useLanguage";
 import { useTranslation } from "../hooks/useTranslation";
 import { saveSession } from "../services/sessionService";
+import { getSession } from "../services/sessionService";
 import { addBlockQuestions } from "../question-engine/engine/interviewEngine";
+import { hydrateInterviewSession } from "../utils/sessionHydration";
 
 import {
   DATE_MASK_MAX_LENGTH,
@@ -33,16 +34,14 @@ export default function InterviewPage() {
     setAnswer,
     responses,
     sessionId,
-    resumeQuestionId,
-    setResumeQuestionId,
   } = useInterviewStore();
 
   const [answer, setAnswerValue] = useState("");
 
   const [error, setError] = useState("");
+  const [isHydrating, setIsHydrating] = useState(true);
 
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const initialResumeQuestionId = useRef(resumeQuestionId);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -84,26 +83,55 @@ export default function InterviewPage() {
   };
 
   useEffect(() => {
-    const interviewQuestions = initializeInterview();
+    let cancelled = false;
 
-    setQuestions(interviewQuestions);
+    const loadSession = async () => {
+      const savedSessionId = localStorage.getItem("sessionId");
 
-    if (initialResumeQuestionId.current) {
-      const index = interviewQuestions.findIndex(
-        (q) => q.field === initialResumeQuestionId.current
-      );
-
-      if (index !== -1) {
-        goToQuestion(index);
+      if (!savedSessionId) {
+        setIsHydrating(false);
+        return;
       }
 
-      setResumeQuestionId("");
-    }
-  }, [
-    goToQuestion,
-    setQuestions,
-    setResumeQuestionId,
-  ]);
+      if (sessionId === savedSessionId && questions.length > 0) {
+        setIsHydrating(false);
+        return;
+      }
+
+      try {
+        const data = await getSession(savedSessionId);
+
+        if (cancelled) return;
+
+        const { questions: restoredQuestions, resumeQuestionId } =
+          hydrateInterviewSession(data.session);
+
+        setQuestions(restoredQuestions);
+
+        if (resumeQuestionId) {
+          const index = restoredQuestions.findIndex(
+            (q) => q.field === resumeQuestionId
+          );
+
+          if (index !== -1) {
+            goToQuestion(index);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (!cancelled) {
+          setIsHydrating(false);
+        }
+      }
+    };
+
+    loadSession();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [goToQuestion, questions.length, sessionId, setQuestions]);
 
   useEffect(() => {
     setAnswerValue(
@@ -117,7 +145,12 @@ export default function InterviewPage() {
   // Guards: sessionId must exist, questions must be loaded,
   // currentQuestion must resolve — prevents saves during initialization.
   useEffect(() => {
-    if (!sessionId || !currentQuestion || questions.length === 0) return;
+    if (
+      isHydrating ||
+      !sessionId ||
+      !currentQuestion ||
+      questions.length === 0
+    ) return;
  
     if (autosaveTimer.current) {
       clearTimeout(autosaveTimer.current);
@@ -127,7 +160,8 @@ export default function InterviewPage() {
       saveSession(
         sessionId,
         responses,
-        currentQuestion.field
+        currentQuestion.field,
+        language,
       );
     }, 1000);
  
@@ -137,7 +171,7 @@ export default function InterviewPage() {
         clearTimeout(autosaveTimer.current);
       }
     };
-  }, [responses, currentQuestionIndex]);
+  }, [responses, currentQuestionIndex, currentQuestion?.field, language, isHydrating, sessionId, questions.length]);
  
 
   const isGenderQuestion =
@@ -427,8 +461,12 @@ const handleNext = async () => {
   setAnswerValue("");
 }; 
 
-  if (!currentQuestion) {
+  if (isHydrating) {
     return <div>{t("common.loading")}</div>;
+  }
+
+  if (!currentQuestion) {
+    return <div>No active interview session found.</div>;
   }
 
   return (
