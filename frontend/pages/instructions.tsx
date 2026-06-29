@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 export default function Instructions() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const [consentGiven, setConsentGiven] = useState(false);
 
   const steps = t("instructions.steps", {
     returnObjects: true,
@@ -25,6 +28,30 @@ export default function Instructions() {
           ))}
         </div>
 
+        {/* Consent Section */}
+        <div className="mb-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <h2 className="text-lg font-semibold mb-3">
+            {t("instructions.consentTitle")}
+          </h2>
+
+          <p className="text-sm text-slate-700 leading-6 mb-4">
+            {t("instructions.consentStatement")}
+          </p>
+
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={consentGiven}
+              onChange={(e) => setConsentGiven(e.target.checked)}
+              className="mt-1 h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+            />
+
+            <span className="text-sm text-slate-700">
+              {t("instructions.consentCheckbox")}
+            </span>
+          </label>
+        </div>
+
         <div className="flex justify-between">
           <button
             onClick={() => navigate("/")}
@@ -40,13 +67,18 @@ export default function Instructions() {
 
           <button
             onClick={() => navigate("/interview")}
-            className="
+            disabled={!consentGiven}
+            className={`
               px-6 py-3
-              bg-blue-600
-              text-white
               rounded-xl
-              hover:bg-blue-700
-            "
+              font-medium
+              transition-colors
+              ${
+                consentGiven
+                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  : "bg-slate-300 text-slate-500 cursor-not-allowed"
+              }
+            `}
           >
             {t("instructions.startInterview")}
           </button>
