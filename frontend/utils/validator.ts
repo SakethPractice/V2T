@@ -9,15 +9,6 @@ export function validateAnswer(
       ? answer.trim()
       : answer;
 
-  if (
-    question.required &&
-    (normalizedAnswer === null ||
-      normalizedAnswer === undefined ||
-      normalizedAnswer === "")
-  ) {
-    return "This field is required";
-  }
-
   if (question.type === "number") {
 
     const value = Number(normalizedAnswer);
