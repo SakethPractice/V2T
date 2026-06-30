@@ -3,6 +3,7 @@ import { InterviewResponses } from "./response";
 import { LanguageCode } from "./language";
 export interface InterviewStore {
   selectedLanguage: LanguageCode;
+  autoReadEnabled: boolean;
 
   sessionId: string;
   phone: string;
@@ -13,6 +14,7 @@ export interface InterviewStore {
   responses: InterviewResponses;
 
 setLanguage: (lang: LanguageCode) => void;
+  setAutoReadEnabled: (enabled: boolean) => void;
 
   setQuestions: (questions: Question[]) => void;
 
