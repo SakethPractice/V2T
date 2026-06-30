@@ -354,34 +354,6 @@ export const farmQuestions: Question[] = [
 },
 
 {
-    id: "farm_soil",
-    section: "farm",
-    field: "farm.soil",
-
-    question: {
-        en: "What type of soil is present on your farm?",
-        te: "మీ వ్యవసాయ క్షేత్రంలో ఏ రకమైన నేల ఉంది?",
-        hi: "आपके खेत में किस प्रकार की मिट्टी है?",
-        kn: "ನಿಮ್ಮ ಜಮೀನಿನಲ್ಲಿ ಯಾವ ರೀತಿಯ ಮಣ್ಣು ಇದೆ?",
-        ta: "உங்கள் பண்ணையில் எந்த வகை மண் உள்ளது?",
-        mr: "तुमच्या शेतात कोणत्या प्रकारची माती आहे?",
-        gu: "તમારા ખેતરમાં કઈ પ્રકારની જમીન છે?",
-    },
-
-    placeholder: {
-        en: "Enter soil type",
-        te: "నేల రకాన్ని నమోదు చేయండి",
-        hi: "मिट्टी का प्रकार दर्ज करें",
-        kn: "ಮಣ್ಣಿನ ಪ್ರಕಾರವನ್ನು ನಮೂದಿಸಿ",
-        ta: "மண்ணின் வகையை உள்ளிடவும்",
-        mr: "मातीचा प्रकार प्रविष्ट करा",
-        gu: "જમીનનો પ્રકાર દાખલ કરો",
-    },
-
-    type: "text",
-},
-
-{
     id: "farm_blockCount",
     section: "farm",
     field: "farm.blockCount",
