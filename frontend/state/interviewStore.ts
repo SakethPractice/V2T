@@ -1,22 +1,33 @@
 import { create } from "zustand";
 import i18n from "../i18n";
 import { InterviewStore } from "../types/interview";
-import { InterviewResponses } from "../types/response";
+import {
+  InterviewResponses,
+  createEmptyInterviewResponses,
+} from "../types/response";
+
+const AUTO_READ_STORAGE_KEY = "autoReadEnabled";
+
+const getStoredAutoReadEnabled = (): boolean => {
+  try {
+    const value = localStorage.getItem(AUTO_READ_STORAGE_KEY);
+
+    return value === null ? true : value === "true";
+  } catch {
+    return true;
+  }
+};
 
 export const useInterviewStore = create<InterviewStore> ((set) => ({
     selectedLanguage: "en",
+    autoReadEnabled: getStoredAutoReadEnabled(),
     currentQuestionIndex: 0,
     sessionId: "",
     phone: "",
     resumeQuestionId:"",
     questions: [],
 
-    responses:
-    {
-        farmer: {},
-        farm: {},
-        blocks: [],
-    },
+    responses: createEmptyInterviewResponses(),
 
     setLanguage: (language) => {
         i18n.changeLanguage(language);
@@ -24,6 +35,18 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
             selectedLanguage: language,
         });
         },
+
+    setAutoReadEnabled: (enabled) => {
+      try {
+        localStorage.setItem(AUTO_READ_STORAGE_KEY, String(enabled));
+      } catch {
+        // Ignore storage failures and keep the in-memory value.
+      }
+
+      set({
+        autoReadEnabled: enabled,
+      });
+    },
         
     setQuestions: (questions) => 
         set({
@@ -81,6 +104,7 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
     resetInterview: () =>
     set({
         selectedLanguage: "en",
+        autoReadEnabled: getStoredAutoReadEnabled(),
         sessionId: "",
         currentQuestionIndex: 0,
 
@@ -90,11 +114,7 @@ export const useInterviewStore = create<InterviewStore> ((set) => ({
 
         questions: [],
 
-        responses: {
-            farmer: {},
-            farm: {},
-            blocks: [],
-        },
+        responses: createEmptyInterviewResponses(),
     }),
 
     
