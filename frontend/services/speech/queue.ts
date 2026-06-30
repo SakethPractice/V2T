@@ -3,7 +3,8 @@ import { SpeechSequence } from "../../types/speech";
 
 type Synthesizer = (
   text: string,
-  language: string
+  language: string,
+  signal: AbortSignal
 ) => Promise<Blob>;
 
 class SpeechQueue {
@@ -20,20 +21,17 @@ class SpeechQueue {
   for (const item of sequence.items) {
     if (signal.aborted) return;
 
-    if (!item.text.trim()) {
+    if (!item.text?.trim()) {
     continue;
-    }
-
-    if (item.delay && item.delay > 0) {
-      await this.sleep(item.delay, signal);
     }
 
     if (signal.aborted) return;
 
     const blob = await synthesizer(
-      item.text,
-      item.language
-    );
+  item.text,
+  item.language,
+  signal
+);
 
     if (signal.aborted) return;
 
@@ -55,36 +53,6 @@ class SpeechQueue {
 
   isRunning(): boolean {
   return this.running;
-  }
-
-
-  private sleep(
-    ms: number,
-    signal: AbortSignal
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (signal.aborted) {
-        reject(new DOMException("Aborted", "AbortError"));
-        return;
-      }
-
-      const timeout = window.setTimeout(() => {
-        cleanup();
-        resolve();
-      }, ms);
-
-      const onAbort = () => {
-        clearTimeout(timeout);
-        cleanup();
-        reject(new DOMException("Aborted", "AbortError"));
-      };
-
-      const cleanup = () => {
-        signal.removeEventListener("abort", onAbort);
-      };
-
-      signal.addEventListener("abort", onAbort);
-    });
   }
 }
 

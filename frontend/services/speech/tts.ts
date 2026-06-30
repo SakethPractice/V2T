@@ -147,20 +147,17 @@ class VoiceEngine {
   /**
    * Generate speech from backend.
    */
-  private async synthesize(
-    text: string,
-    language: string
-  ): Promise<Blob> {
-    if (!this.abortController) {
-      throw new Error("AbortController not initialized");
-    }
-
-    return synthesizeSpeech({
-      text,
-      language,
-      signal: this.abortController.signal,
-    });
-  }
+private async synthesize(
+  text: string,
+  language: string,
+  signal: AbortSignal
+): Promise<Blob> {
+  return synthesizeSpeech({
+    text,
+    language,
+    signal,
+  });
+}
 }
 
 const voiceEngine = new VoiceEngine();

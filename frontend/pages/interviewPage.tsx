@@ -8,6 +8,10 @@ import { saveSession } from "../services/sessionService";
 import { getSession } from "../services/sessionService";
 import { addBlockQuestions } from "../question-engine/engine/interviewEngine";
 import { hydrateInterviewSession } from "../utils/sessionHydration";
+import voiceEngine from "../services/speech/tts";
+import { SpeechPriority } from "../types/speech";
+import { createQuestionSpeechItems } from "../services/speech/questionSpeech";
+import QuestionCard from "../components/interview/questionCard";
 
 import {
   DATE_MASK_MAX_LENGTH,
@@ -34,6 +38,7 @@ export default function InterviewPage() {
     setAnswer,
     responses,
     sessionId,
+    autoReadEnabled,
   } = useInterviewStore();
 
   const [answer, setAnswerValue] = useState("");
@@ -139,6 +144,27 @@ export default function InterviewPage() {
     );
   }, [currentQuestionIndex, responses]);
 
+useEffect(() => {
+  if (isHydrating || !currentQuestion) {
+    return;
+  }
+
+  if (!autoReadEnabled) {
+    voiceEngine.stop();
+    return;
+  }
+
+  voiceEngine.stop();
+
+  voiceEngine.playSequence({
+    priority: SpeechPriority.AUTO_QUESTION,
+    items: createQuestionSpeechItems(currentQuestion, language),
+  });
+
+  return () => {
+    voiceEngine.stop();
+  };
+}, [currentQuestion, language, isHydrating, autoReadEnabled]);
  
   // Autosave: fires whenever responses or currentQuestionIndex change.
   // Debounced by 1000ms so rapid typing doesn't flood the API.
@@ -198,6 +224,17 @@ export default function InterviewPage() {
         event.target.value
       )
     );
+  };
+
+  const handleRepeatQuestion = () => {
+    if (!currentQuestion) return;
+
+    voiceEngine.stop();
+
+    voiceEngine.playSequence({
+      priority: SpeechPriority.USER_ACTION,
+      items: createQuestionSpeechItems(currentQuestion, language),
+    });
   };
 
   const handleSelectChange = (
@@ -470,9 +507,9 @@ const handleNext = async () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-100 md:flex">
       {/* Main Content */}
-      <div className="flex-1 py-8 px-4 overflow-y-auto">
+      <div className="flex-1 py-8 px-4 pb-32 overflow-y-auto md:pb-8">
         <div className="max-w-3xl mx-auto">
 
           {/* Header */}
@@ -501,18 +538,17 @@ const handleNext = async () => {
           </div>
 
           {/* Question Card */}
-          <div className="bg-white rounded-2xl shadow-md p-8 mb-6">
-
-            <div className="mb-4">
-              <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full">
-                {t(`sections.${currentQuestion.section}`)}
-              </span>
-            </div>
-
-            <h2 className="text-3xl font-semibold leading-relaxed">
-              {currentQuestion.question[language]}
-            </h2>
-
+          <div className="mb-6">
+            <QuestionCard
+              questionNumber={currentQuestionIndex + 1}
+              totalQuestions={questions.length}
+              section={t(`sections.${currentQuestion.section}`)}
+              question={
+                currentQuestion.question[language] ??
+                currentQuestion.question.en
+              }
+              onRepeat={handleRepeatQuestion}
+            />
           </div>
 
           {/* Answer Card */}
@@ -535,7 +571,10 @@ const handleNext = async () => {
           {/* Navigation */}
           <div className="bg-white rounded-2xl shadow-md p-4 flex justify-between">
             <button
-              onClick={previousQuestion}
+              onClick={() => {
+                voiceEngine.stop();
+                previousQuestion();
+              }}
               disabled={currentQuestionIndex === 0}
               className="
                 px-6 py-3
@@ -550,7 +589,10 @@ const handleNext = async () => {
             </button>
 
             <button
-              onClick={handleNext}
+              onClick={() => {
+                voiceEngine.stop();
+                handleNext();
+              }}
               className="
                 px-6 py-3
                 bg-blue-600
@@ -566,8 +608,48 @@ const handleNext = async () => {
         </div>
       </div>
 
+      {/* Mobile actions */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:hidden">
+        <div className="mx-auto flex max-w-3xl gap-3">
+          <button
+            onClick={async () => {
+              if (!currentQuestion || !sessionId) {
+                return;
+              }
+
+              try {
+                await saveSession(
+                  sessionId,
+                  responses,
+                  currentQuestion.field,
+                  language,
+                );
+
+                alert("Draft saved successfully!");
+              } catch (error) {
+                console.error(error);
+                alert("Failed to save draft.");
+              }
+            }}
+            disabled={!sessionId}
+            className="flex-1 rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {t("common.save")}
+          </button>
+
+          <button
+            onClick={() => navigate("/review")}
+            className="flex-1 rounded-lg border border-slate-300 bg-white px-4 py-3 font-medium text-slate-700 transition-colors hover:bg-slate-50"
+          >
+            {t("common.review")}
+          </button>
+        </div>
+      </div>
+
       {/* Progress Sidebar */}
-      <ProgressSidebar />
+      <div className="hidden md:block">
+        <ProgressSidebar />
+      </div>
     </div>
   );
 };
