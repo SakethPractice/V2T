@@ -22,7 +22,7 @@ export interface FarmResponse {
   district?: string;
   Tarea?: number;
   Uarea?: number;
-  farmingType?: string;
+  type?: string;
   watersrc?: string;
   blockCount?: number;
   photo?: string;
@@ -33,6 +33,7 @@ export interface BlockResponse {
   name?: string;
   area?: number;
   farmingType?: string;
+  watersrc?: string;
   soil?: string;
 }
 
@@ -41,3 +42,48 @@ export interface InterviewResponses {
   farm: FarmResponse;
   blocks: BlockResponse[];
 }
+
+export const createEmptyFarmerResponse = (): FarmerResponse => ({
+  name: "",
+  age: undefined,
+  gender: "",
+  mobile_num: "",
+  address: "",
+  village: "",
+  taluk: "",
+  district: "",
+  state: "",
+  pincode: "",
+  photo: "",
+});
+
+export const createEmptyFarmResponse = (): FarmResponse => ({
+  name: "",
+  address: "",
+  village: "",
+  taluk: "",
+  state: "",
+  pincode: "",
+  district: "",
+  Tarea: undefined,
+  Uarea: undefined,
+  type: "",
+  watersrc: "",
+  blockCount: undefined,
+  photo: "",
+});
+
+export const createEmptyBlockResponse = (): BlockResponse => ({
+  blockNumber: undefined,
+  name: "",
+  area: undefined,
+  farmingType: "",
+  watersrc: "",
+  soil: "",
+});
+
+export const createEmptyInterviewResponses = (): InterviewResponses => ({
+  farmer: createEmptyFarmerResponse(),
+  farm: createEmptyFarmResponse(),
+  blocks: [],
+});
