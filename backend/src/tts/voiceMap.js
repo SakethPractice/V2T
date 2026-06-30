@@ -1,7 +1,7 @@
 const VOICE_MAP = Object.freeze({
   en: {
-    voice: "en-US-EmmaMultilingualNeural",
-    locale: "en-US",
+    voice: "en-IN-NeerjaExpressiveNeural",
+    locale: "en-IN",
     name: "English",
   },
 
@@ -12,7 +12,7 @@ const VOICE_MAP = Object.freeze({
   },
 
   kn: {
-    voice: "kn-IN-SapnaNeural",
+    voice: "kn-IN-GaganNeural",
     locale: "kn-IN",
     name: "Kannada",
   },
