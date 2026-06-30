@@ -14,6 +14,7 @@ interface EditableReviewRowProps {
   section: "farmer" | "farm" | "block";
 
   field: string;
+  editable?: boolean;
 
   question?: Question;
   onSave?: () => void;
@@ -24,6 +25,7 @@ export default function EditableReviewRow({
   value,
   section,
   field,
+  editable = true,
   question,
   onSave,
 }: EditableReviewRowProps) {
@@ -96,7 +98,7 @@ export default function EditableReviewRow({
         {label}
       </span>
 
-      {isEditing ? (
+      {editable && isEditing ? (
         <>
           {question?.type === "select" && question.options ? (
             <select
@@ -199,17 +201,21 @@ export default function EditableReviewRow({
             {value ?? "-"}
           </span>
 
-          <button
-            onClick={() => setIsEditing(true)}
-            className="
-              flex
-              justify-end
-              text-slate-500
-              hover:text-slate-800
-            "
-          >
-            <Pencil size={18} />
-          </button>
+          {editable ? (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="
+                flex
+                justify-end
+                text-slate-500
+                hover:text-slate-800
+              "
+            >
+              <Pencil size={18} />
+            </button>
+          ) : (
+            <span />
+          )}
         </>
       )}
 
