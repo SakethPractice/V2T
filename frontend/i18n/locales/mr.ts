@@ -66,6 +66,7 @@ consentCheckbox:
     answerLabel: "तुमचे उत्तर",
 
     repeatQuestion: "प्रश्न पुन्हा ऐका",
+    readOptions: "पर्याय वाचा",
     review: "उत्तरांचे पुनरावलोकन करा",
     finish: "पूर्ण करा",
 

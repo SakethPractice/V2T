@@ -1,5 +1,7 @@
 import { SpeechItem } from "../../types/speech";
 import { Question } from "../../types/questions";
+import { translate } from "../../i18n/translate";
+import { LanguageCode } from "../../types/language";
 
 export function createQuestionSpeechItems(
   question: Question,
@@ -30,4 +32,18 @@ export function createQuestionSpeechItems(
   }
 
   return items;
+}
+
+export function createQuestionOptionSpeechItems(
+  question: Question,
+  language: LanguageCode,
+): SpeechItem[] {
+  if (!question.options?.length) {
+    return [];
+  }
+
+  return question.options.map((option) => ({
+    text: translate(option, language),
+    language,
+  }));
 }

@@ -66,6 +66,7 @@ const hi = {
     answerLabel: "आपका उत्तर",
 
     repeatQuestion: "प्रश्न दोबारा सुनें",
+    readOptions: "विकल्प सुनें",
     review: "उत्तर की समीक्षा करें",
     finish: "समाप्त करें",
 
