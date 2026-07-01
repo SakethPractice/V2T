@@ -20,6 +20,8 @@ export interface FarmResponse {
   state?: string;
   pincode?: string;
   district?: string;
+  lat?: number;
+  long?: number;
   Tarea?: number;
   Uarea?: number;
   type?: string;
@@ -33,7 +35,6 @@ export interface BlockResponse {
   name?: string;
   area?: number;
   farmingType?: string;
-  watersrc?: string;
   soil?: string;
 }
 
@@ -78,7 +79,6 @@ export const createEmptyBlockResponse = (): BlockResponse => ({
   name: "",
   area: undefined,
   farmingType: "",
-  watersrc: "",
   soil: "",
 });
 
