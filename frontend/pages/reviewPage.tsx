@@ -122,6 +122,7 @@ export default function ReviewPage() {
             section="farmer"
             field="farmer.mobile_num"
             question={getQuestionForField("farmer.mobile_num")}
+            editable={false}
             onSave={handleRowSave}
           />
 
@@ -201,15 +202,6 @@ export default function ReviewPage() {
           />
 
           <EditableReviewRow
-            label="Soil Type"
-            value={responses?.farm?.soil ?? ""}
-            section="farm"
-            field="farm.soil"
-            question={getQuestionForField("farm.soil")}
-            onSave={handleRowSave}
-          />
-
-          <EditableReviewRow
             label="Block Count"
             value={responses?.farm?.blockCount ?? ""}
             section="farm"
@@ -252,6 +244,15 @@ export default function ReviewPage() {
     />
 
     <EditableReviewRow
+      label="Soil Type"
+      value={block?.soil ?? ""}
+      section="block"
+      field={`block${index}.soil`}
+      question={getQuestionForField(`block${index}.soil`)}
+      onSave={handleRowSave}
+    />
+
+    <EditableReviewRow
       label="Water Source"
       value={block?.watersrc ?? ""}
       section="block"
@@ -273,13 +274,17 @@ export default function ReviewPage() {
             p-5
             mt-8
             flex
-            justify-center
+            flex-col
+            gap-3
+            sm:flex-row
+            sm:justify-between
+            sm:items-center
           "
         >
           
           <button
             onClick={() => navigate("/interview")}
-            className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors -translate-x-8"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors sm:w-auto"
           >
             ← Back to Onboarding
           </button>
@@ -288,6 +293,8 @@ export default function ReviewPage() {
             onClick={handleSubmit}
             disabled={submitting}
             className="
+              w-full
+              sm:w-auto
               px-6
               py-3
               rounded-xl

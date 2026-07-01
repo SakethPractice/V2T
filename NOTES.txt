@@ -72,16 +72,32 @@ Smaller app that handles this current form app
 
 CHANGES
 
-unit and area same question
+
 tts and stt model- report best choice/options
 link shared - 2 defined languages english + lang of farmer
 fine tune static text/question
-pincode to Address instead of village name-> add address fields as well
-read options as well 
-soil-list -> block
 if not completed do not mark completed in DB
-phone number question - non editable- skip- ony review page
 max min for area of land
 block limits 
 review guard rails- option edits
-review page that farmer sees can have voice editing again
+
+TODAY
+
+pincode to Address instead of village name-> add address fields as well
+
+reduce delay bw options and questions
+perma cache instructions
+and pre load prev questions 
+
+base url= "https://cmfotest-webapi.azurewebsites.net/api/Support/GetAddressListByPinCode"
+payload: {
+    pinCode:xxxxxx,
+}
+
+same url ending is GetAddressListByVillage
+payload:{
+    pinCode:xxxxxx,
+    taluk: xxxxxxxxx,(from prev response),
+    village:"",
+}
+ull get lat long

@@ -3,9 +3,7 @@ import { Pencil, Check, X } from "lucide-react";
 import { Question } from "../../types/questions";
 import { sanitizeAnswer, validateAnswer } from "../../utils/validator";
 import { useInterviewStore } from "../../state/interviewStore";
-import { useTranslation } from "../../hooks/useTranslation";
-import { translate } from "../../i18n/translate";
-import { useLanguage } from "../../hooks/useLanguage";
+import OptionButtons from "../interview/optionButtons";
 
 interface EditableReviewRowProps {
   label: string;
@@ -14,6 +12,7 @@ interface EditableReviewRowProps {
   section: "farmer" | "farm" | "block";
 
   field: string;
+  editable?: boolean;
 
   question?: Question;
   onSave?: () => void;
@@ -24,14 +23,13 @@ export default function EditableReviewRow({
   value,
   section,
   field,
+  editable = true,
   question,
   onSave,
 }: EditableReviewRowProps) {
   const setAnswer = useInterviewStore(
     (state) => state.setAnswer
   );
-  const { t } = useTranslation();
-  const { language } = useLanguage();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -96,35 +94,16 @@ export default function EditableReviewRow({
         {label}
       </span>
 
-      {isEditing ? (
+      {editable && isEditing ? (
         <>
           {question?.type === "select" && question.options ? (
-            <select
+            <OptionButtons
+              name={question.id}
+              options={question.options}
               value={editValue}
-              onChange={(e) =>
-                handleInputChange(e.target.value)
-              }
-              className="
-                border
-                border-slate-300
-                rounded-lg
-                px-3
-                py-2
-                w-full
-              "
-            >
-            <option value="">{t("interview.selectOption")}</option>
-
-          {question.options?.map((option) => (
-          <option
-            key={option.en}
-            value={option.en}
-          >
-          {translate(option, language)}
-          </option>
-          ))}
-
-            </select>
+              onChange={handleInputChange}
+              className="sm:grid-cols-2"
+            />
           ) : (
             <input
               type={
@@ -199,17 +178,21 @@ export default function EditableReviewRow({
             {value ?? "-"}
           </span>
 
-          <button
-            onClick={() => setIsEditing(true)}
-            className="
-              flex
-              justify-end
-              text-slate-500
-              hover:text-slate-800
-            "
-          >
-            <Pencil size={18} />
-          </button>
+          {editable ? (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="
+                flex
+                justify-end
+                text-slate-500
+                hover:text-slate-800
+              "
+            >
+              <Pencil size={18} />
+            </button>
+          ) : (
+            <span />
+          )}
         </>
       )}
 

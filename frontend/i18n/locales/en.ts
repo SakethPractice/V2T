@@ -24,7 +24,8 @@ const en = {
 
     loading: "Loading...",
     processing: "Processing...",
-    pleaseWait: "Please wait..."
+    pleaseWait: "Please wait...",
+    review: "Review"
   },
 
   language: {
@@ -44,7 +45,7 @@ const en = {
       "Ensure all information provided is accurate.",
       "Questions can be replayed during the interview."
     ],
-
+    autoRead: "Would you like for the questions to be read?",
     startInterview: "Start Interview"
   },
 
@@ -63,6 +64,7 @@ const en = {
     answerLabel: "Your Answer",
     
     repeatQuestion: "Repeat Question",
+    readOptions: "Read Options",
     review: "Review Answers",
     finish: "Finish",
 
