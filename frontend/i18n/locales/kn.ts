@@ -66,6 +66,7 @@ const kn = {
     answerLabel: "ನಿಮ್ಮ ಉತ್ತರ",
 
     repeatQuestion: "ಪ್ರಶ್ನೆಯನ್ನು ಮತ್ತೆ ಕೇಳಿ",
+    readOptions: "ಆಯ್ಕೆಗಳನ್ನು ಓದಿ",
     review: "ಉತ್ತರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ",
     finish: "ಮುಗಿಸಿ",
 

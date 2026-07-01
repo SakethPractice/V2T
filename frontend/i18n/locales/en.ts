@@ -64,6 +64,7 @@ const en = {
     answerLabel: "Your Answer",
     
     repeatQuestion: "Repeat Question",
+    readOptions: "Read Options",
     review: "Review Answers",
     finish: "Finish",
 

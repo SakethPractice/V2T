@@ -10,8 +10,12 @@ import { addBlockQuestions } from "../question-engine/engine/interviewEngine";
 import { hydrateInterviewSession } from "../utils/sessionHydration";
 import voiceEngine from "../services/speech/tts";
 import { SpeechPriority } from "../types/speech";
-import { createQuestionSpeechItems } from "../services/speech/questionSpeech";
+import {
+  createQuestionOptionSpeechItems,
+  createQuestionSpeechItems,
+} from "../services/speech/questionSpeech";
 import QuestionCard from "../components/interview/questionCard";
+import OptionButtons from "../components/interview/optionButtons";
 
 import {
   DATE_MASK_MAX_LENGTH,
@@ -45,6 +49,9 @@ export default function InterviewPage() {
 
   const [error, setError] = useState("");
   const [isHydrating, setIsHydrating] = useState(true);
+  const [isSpeechBusy, setIsSpeechBusy] = useState(
+    voiceEngine.isSpeaking()
+  );
 
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -144,6 +151,20 @@ export default function InterviewPage() {
     );
   }, [currentQuestionIndex, responses]);
 
+  useEffect(() => {
+    const syncSpeechState = () => {
+      setIsSpeechBusy(voiceEngine.isSpeaking());
+    };
+
+    syncSpeechState();
+
+    const interval = setInterval(syncSpeechState, 200);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
 useEffect(() => {
   if (isHydrating || !currentQuestion) {
     return;
@@ -237,10 +258,18 @@ useEffect(() => {
     });
   };
 
-  const handleSelectChange = (
-    event: ChangeEvent<HTMLSelectElement>
-  ) => {
-    setAnswerValue(event.target.value);
+  const handleReadOptions = () => {
+    if (!currentQuestion?.options?.length || isSpeechBusy) {
+      return;
+    }
+
+    void voiceEngine.playSequence({
+      priority: SpeechPriority.USER_ACTION,
+      items: createQuestionOptionSpeechItems(
+        currentQuestion,
+        language
+      ),
+    });
   };
 
   const handleImageChange = (
@@ -262,75 +291,14 @@ useEffect(() => {
     }
 
     if (currentQuestion.type === "select" && currentQuestion.options) {
-      if (isGenderQuestion) {
-        return (
-          <div className="grid gap-3 sm:grid-cols-3">
-            {currentQuestion.options.map((option) => {
-              const optionLabel = option[language];
-              const checked = currentAnswer === option.en;
-
-              return (
-                <label
-                  key={optionLabel}
-                  className={`flex items-center gap-3 rounded-xl border px-4 py-3 transition-colors ${
-                    checked
-                      ? "border-blue-600 bg-blue-50"
-                      : "border-slate-300 bg-white"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    checked={checked}
-                    onChange={() =>
-                      setAnswerValue(checked ? "" : option.en)
-                    }
-                    className="h-4 w-4 accent-blue-600"
-                  />
-
-                  <span className="text-slate-700">
-                    {optionLabel}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-        );
-      }
-
       return (
-        <select
-          key={currentQuestion.id}
+        <OptionButtons
+          name={currentQuestion.id}
+          options={currentQuestion.options}
           value={currentAnswer}
-          onChange={handleSelectChange}
-          className="
-            w-full
-            border
-            border-slate-300
-            rounded-xl
-            px-4
-            py-3
-            focus:outline-none
-            focus:ring-2
-            focus:ring-blue-500
-          "
-        >
-          <option value="">
-            {t("interview.selectOption")}
-          </option>
-
-          {currentQuestion.options.map((option) => {
-            const optionLabel = option[language] ?? option.en;
-
-            return (
-            <option
-              key={option.en}
-              value={option.en}
-            >
-          {optionLabel}
-            </option>
-          );
-          })}
-        </select>
+          onChange={setAnswerValue}
+          className={isGenderQuestion ? "sm:grid-cols-3" : "sm:grid-cols-2"}
+        />
       );
     }
 
@@ -556,6 +524,19 @@ const handleNext = async () => {
             <h3 className="text-lg font-medium mb-4">
               {t("interview.answerLabel")}
             </h3>
+
+            {currentQuestion.options?.length ? (
+              <div className="mb-4 flex justify-end">
+                <button
+                  onClick={handleReadOptions}
+                  disabled={isSpeechBusy}
+                  className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <span aria-hidden="true">🔊</span>
+                  {t("interview.readOptions")}
+                </button>
+              </div>
+            ) : null}
 
             {renderAnswerInput()}
 

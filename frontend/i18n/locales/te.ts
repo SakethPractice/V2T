@@ -66,6 +66,7 @@ const te = {
     answerLabel: "మీ సమాధానం",
 
     repeatQuestion: "ప్రశ్నను మళ్లీ వినండి",
+    readOptions: "ఎంపికలు చదవండి",
     review: "సమాధానాలను సమీక్షించండి",
     finish: "ముగించండి",
 
