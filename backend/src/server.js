@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import farmerRoutes from "./routes/farmerRoutes.js";
 import ttsRoutes from "./routes/ttsRoutes.js";
+import sttRoutes from "./routes/sttRoutes.js";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(cors());
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/farmers", farmerRoutes);
 app.use("/api/tts", ttsRoutes);
+app.use("/api/stt", sttRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running");
