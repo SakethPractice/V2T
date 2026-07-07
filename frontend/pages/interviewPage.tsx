@@ -1,9 +1,11 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { Volume2, Mic, RotateCcw, Square } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { fetchPincode } from "../services/pincodeService";
 import { useInterviewStore } from "../state/interviewStore";
 import { useLanguage } from "../hooks/useLanguage";
 import { useTranslation } from "../hooks/useTranslation";
+import { useVoiceJob } from "../hooks/useVoiceJob";
 import { saveSession } from "../services/sessionService";
 import { getSession } from "../services/sessionService";
 import { addBlockQuestions } from "../question-engine/engine/interviewEngine";
@@ -56,6 +58,12 @@ export default function InterviewPage() {
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentQuestion = questions[currentQuestionIndex];
+
+  const voiceJob = useVoiceJob({
+    questionId: currentQuestion?.id ?? "",
+    language,
+    targetField: currentQuestion?.field ?? "",
+  });
 
   const getSavedAnswer = () => {
     if (!currentQuestion) return "";
@@ -146,6 +154,9 @@ export default function InterviewPage() {
   }, [goToQuestion, questions.length, sessionId, setQuestions]);
 
   useEffect(() => {
+    // BUG FIX #1: Clear voice job state when moving to next question
+    // Prevents extracted value from previous question leaking to current question
+    voiceJob.clearRecording();
     setAnswerValue(
       String(getSavedAnswer())
     );
@@ -164,6 +175,41 @@ export default function InterviewPage() {
       clearInterval(interval);
     };
   }, []);
+
+  // BUG FIX #4: Show transcript in input field during recording, not in dummy text box
+  useEffect(() => {
+    // Only update input with transcript if status is recording AND there's new transcript
+    if (voiceJob.state.status === "recording") {
+      setAnswerValue(voiceJob.state.browserTranscript || "");
+    }
+  }, [voiceJob.state.browserTranscript, voiceJob.state.status]);
+
+  // When voiceJob completes extraction, populate input and persist to zustand
+  useEffect(() => {
+    if (
+      voiceJob.state.status === "completed" &&
+      voiceJob.state.extractedValue &&
+      currentQuestion
+    ) {
+      let finalValue = String(voiceJob.state.extractedValue);
+
+      // BUG FIX #3: For options questions, try to match the extracted value to an available option
+      if (currentQuestion.options && currentQuestion.options.length > 0) {
+        const extracted = finalValue.toLowerCase().trim();
+        const matchedOption = currentQuestion.options.find((opt) => {
+          const optText = (typeof opt === 'string' ? opt : opt.en ?? opt).toLowerCase();
+          return optText.includes(extracted) || extracted.includes(optText);
+        });
+        if (matchedOption) {
+          finalValue = typeof matchedOption === 'string' ? matchedOption : matchedOption.en ?? matchedOption;
+        }
+      }
+
+      setAnswerValue(finalValue);
+      setAnswer(currentQuestion.section, currentQuestion.field, finalValue);
+      voiceJob.clearRecording(); // Clear after applying to prevent leaking to next question
+    }
+  }, [voiceJob.state.status, voiceJob.state.extractedValue, currentQuestion, setAnswer]);
 
 useEffect(() => {
   if (isHydrating || !currentQuestion) {
@@ -239,12 +285,14 @@ useEffect(() => {
       return;
     }
 
-    setAnswerValue(
-      sanitizeAnswer(
-        currentQuestion.field,
-        event.target.value
-      )
+    const sanitized = sanitizeAnswer(
+      currentQuestion.field,
+      event.target.value
     );
+
+    setAnswerValue(sanitized);
+    // persist live to zustand so autosave can pick it up
+    setAnswer(currentQuestion.section, currentQuestion.field, sanitized);
   };
 
   const handleRepeatQuestion = () => {
@@ -516,6 +564,14 @@ const handleNext = async () => {
                 currentQuestion.question.en
               }
               onRepeat={handleRepeatQuestion}
+              voiceStatus={voiceJob.state.status}
+              browserTranscript={voiceJob.state.browserTranscript}
+              aiTranscript={voiceJob.state.aiTranscript}
+              extractedValue={voiceJob.state.extractedValue}
+              
+              onRecord={voiceJob.startRecording}
+              onStop={voiceJob.stopRecording}
+              onClearRecording={voiceJob.clearRecording}
             />
           </div>
 
@@ -539,6 +595,76 @@ const handleNext = async () => {
             ) : null}
 
             {renderAnswerInput()}
+
+            {/* BUG FIX #2: For image/photo questions, hide the STT buttons (mic, rerecord, speaker) */}
+            {currentQuestion.type !== "image" && (
+            <div className="mt-3 flex items-center gap-2">
+
+              {voiceJob.state.status === "recording" ? (
+                <button
+                  type="button"
+                  onClick={voiceJob.stopRecording}
+                  className="rounded-lg border p-2 hover:bg-red-50"
+                  title="Stop Recording"
+                >
+                  <Square className="h-5 w-5 text-red-600" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={voiceJob.startRecording}
+                  disabled={voiceJob.state.status === "processing"}
+                  className="rounded-lg border p-2 hover:bg-blue-50 disabled:opacity-50"
+                  title="Start Recording"
+                >
+                  <Mic className="h-5 w-5 text-blue-600" />
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  voiceJob.clearRecording();
+                  voiceJob.startRecording();
+                }}
+                disabled={voiceJob.state.status === "recording"}
+                className="rounded-lg border p-2 hover:bg-gray-100 disabled:opacity-50"
+                title="Re-record"
+              >
+                <RotateCcw className="h-5 w-5" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  // toggle: stop if speaking, otherwise speak the current answer
+                  if (voiceEngine.isSpeaking()) {
+                    voiceEngine.stop();
+                    return;
+                  }
+
+                  const textToSpeak = currentAnswer ||
+                    (currentQuestion.question[language] ?? currentQuestion.question.en);
+
+                  if (!textToSpeak) return;
+
+                  void voiceEngine.speak(String(textToSpeak), language);
+                }}
+                className="rounded-lg border p-2 hover:bg-gray-100"
+                title="Listen"
+              >
+                <Volume2 className="h-5 w-5" />
+              </button>
+
+            </div>
+            )}
+
+            {/* BUG FIX #4: Hide dummy transcript box; transcript now shows in input field during recording */}
+            {voiceJob.state.status === "processing" && (
+              <div className="mt-2 text-sm text-gray-500">
+                Processing...
+              </div>
+            )}
 
             {error && (
               <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
