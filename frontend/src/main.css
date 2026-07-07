@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@keyframes borderBlink {
+  0%, 100% { 
+    border-color: transparent; 
+    box-shadow: 0 0 0 transparent; 
+  }
+  50% { 
+    border-color: #ef4444; /* Tailwind red-500 */
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); 
+  }
+}
+
+.animate-border-blink {
+  border: 2px solid transparent;
+  animation: borderBlink 1.5s infinite;
+}

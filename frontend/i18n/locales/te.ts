@@ -75,6 +75,8 @@ const te = {
     enterValue: "విలువను నమోదు చేయండి",
     selectOption: "ఒక ఎంపికను ఎంచుకోండి",
 
+    pressToAnswer: "సమాధానం ఇవ్వడానికి దయచేసి మైక్ బటన్‌ను నొక్కండి.",
+
     farmerSection: "రైతు వివరాలు",
     farmSection: "పొలం వివరాలు",
     blockSection: "బ్లాక్ వివరాలు",

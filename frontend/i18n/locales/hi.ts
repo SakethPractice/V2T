@@ -75,6 +75,8 @@ const hi = {
     enterValue: "मान दर्ज करें",
     selectOption: "एक विकल्प चुनें",
 
+    pressToAnswer: "उत्तर देने के लिए कृपया माइक बटन दबाएँ।",
+
     farmerSection: "किसान विवरण",
     farmSection: "खेत का विवरण",
     blockSection: "ब्लॉक विवरण",

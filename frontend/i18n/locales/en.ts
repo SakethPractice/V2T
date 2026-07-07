@@ -73,6 +73,8 @@ const en = {
     enterValue: "Enter a value",
     selectOption: "Select an option",
 
+    pressToAnswer: "Please press the mic button to answer.",
+
     farmerSection: "Farmer Details",
     farmSection: "Farm Details",
     blockSection: "Block Details",

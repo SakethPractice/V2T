@@ -75,6 +75,8 @@ const kn = {
     enterValue: "ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ",
     selectOption: "ಒಂದು ಆಯ್ಕೆಯನ್ನು ಆರಿಸಿ",
 
+    pressToAnswer: "ಉತ್ತರಿಸಲು ದಯವಿಟ್ಟು ಮೈಕ್ ಬಟನ್ ಒತ್ತಿರಿ.",
+
     farmerSection: "ರೈತರ ವಿವರಗಳು",
     farmSection: "ಜಮೀನಿನ ವಿವರಗಳು",
     blockSection: "ಬ್ಲಾಕ್ ವಿವರಗಳು",

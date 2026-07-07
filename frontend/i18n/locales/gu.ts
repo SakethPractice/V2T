@@ -75,6 +75,8 @@ consentCheckbox:
     enterValue: "મૂલ્ય દાખલ કરો",
     selectOption: "એક વિકલ્પ પસંદ કરો",
 
+    pressToAnswer: "જવાબ આપવા માટે કૃપા કરીને માઇક બટન દબાવો.",
+
     farmerSection: "ખેડૂતની માહિતી",
     farmSection: "ખેતરની માહિતી",
     blockSection: "બ્લોકની માહિતી",
