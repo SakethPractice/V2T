@@ -14,6 +14,14 @@ class VoiceEngine {
 
   private abortController: AbortController | null = null;
 
+  // 1. The Global Audio Cache
+  private audioCache = new Map<string, Blob>();
+
+  // 2. Helper to generate unique cache keys
+  private getCacheKey(text: string, language: string) {
+    return `${language}:${text}`;
+  }
+
   /**
    * Speak a single piece of text.
    */
@@ -76,6 +84,23 @@ class VoiceEngine {
       this.abortController = null;
       this.currentSequence = null;
       this.currentPriority = SpeechPriority.BACKGROUND;
+    }
+  }
+
+  /**
+   * Silently prefetch and cache a speech sequence in the background.
+   */
+  public prefetchSequence(sequence: SpeechSequence) {
+    const dummyController = new AbortController();
+
+    for (const item of sequence.items) {
+      if (item.text?.trim()) {
+        // Calling synthesize caches the result silently
+        this.synthesize(item.text, item.language, dummyController.signal)
+          .catch(() => {
+            // Ignore background prefetch errors
+          });
+      }
     }
   }
 
@@ -152,12 +177,24 @@ private async synthesize(
   language: string,
   signal: AbortSignal
 ): Promise<Blob> {
-  return synthesizeSpeech({
-    text,
-    language,
-    signal,
-  });
-}
+    const key = this.getCacheKey(text, language);
+
+    // Check cache first
+    if (this.audioCache.has(key)) {
+      return this.audioCache.get(key)!;
+    }
+
+    // Otherwise, fetch from API
+    const blob = await synthesizeSpeech({
+      text,
+      language,
+      signal,
+    });
+
+    // Save to cache before returning
+    this.audioCache.set(key, blob);
+    return blob;
+  }
 }
 
 const voiceEngine = new VoiceEngine();
