@@ -1,0 +1,140 @@
+import { useState, useCallback, useEffect } from 'react';
+import { useAudioRecording } from './useAudioRecording';
+import { LanguageCode } from '../types/language';
+import { uploadAudioForExtraction } from "../services/speech/sttApi";
+
+export type VoiceJobStatus =
+  | "idle"
+  | "recording"
+  | "processing"
+  | "completed"
+  | "failed";
+
+export interface VoiceJobState {
+  jobId: string | null;
+  questionId: string;
+  status: VoiceJobStatus;
+  browserTranscript: string;
+  aiTranscript: string;
+  extractedValue: string;
+  error: string | null;
+}
+
+interface UseVoiceJobOptions {
+  questionId: string;
+  language: LanguageCode;
+  targetField: string;
+}
+
+export const useVoiceJob = ({ questionId, language, targetField }: UseVoiceJobOptions) => {
+  const [state, setState] = useState<VoiceJobState>({
+    jobId: null,
+    questionId,
+    status: "idle",
+    browserTranscript: "",
+    aiTranscript: "",
+    extractedValue: "",
+    error: null,
+  });
+
+  const { 
+    isRecording, 
+    startRecording: startAudioRecording, 
+    stopRecording: stopAudioRecording, 
+    transcript 
+  } = useAudioRecording(language);
+
+  useEffect(() => {
+    setState((prev) => {
+      if (prev.questionId === questionId) return prev;
+      return { ...prev, questionId };
+    });
+  }, [questionId]);
+
+  useEffect(() => {
+    if (transcript) {
+      const combinedTranscript = `${transcript.final} ${transcript.interim}`.trim();
+      setState((prev) => ({ ...prev, browserTranscript: combinedTranscript }));
+    }
+  }, [transcript]);
+
+  const startRecording = useCallback(async () => {
+    setState((prev) => ({
+      ...prev,
+      jobId: crypto.randomUUID(),
+      status: "recording",
+      error: null,
+      browserTranscript: "",
+      aiTranscript: "",
+      extractedValue: "",
+    }));
+    
+    await startAudioRecording();
+  }, [startAudioRecording]);
+
+  // 2. Implement processRecording(blob) with try/catch and stale checks
+  const processRecording = useCallback(async (blob: Blob, currentJobId: string | null) => {
+    try {
+      // Assuming processSpeech takes an object. Adjust parameters as needed for your specific sttApi implementation.
+      const response = await uploadAudioForExtraction({ audioBlob: blob, language, targetField });
+      
+      setState((prev) => {
+        // 5. Ignore stale responses
+        if (prev.jobId !== currentJobId) return prev;
+        
+        return {
+          ...prev,
+          status: "completed",
+          aiTranscript: response.transcript,
+          extractedValue: response.value, // Mapping the returned 'value' to 'extractedValue'
+        };
+      });
+    } catch (error) {
+      setState((prev) => {
+        // 5. Ignore stale responses even on errors
+        if (prev.jobId !== currentJobId) return prev;
+        
+        return {
+          ...prev,
+          status: "failed",
+          // 3. Extract error message safely
+          error: error instanceof Error ? error.message : "An unknown processing error occurred",
+        };
+      });
+    }
+  }, [language, targetField]);
+
+  const stopRecording = useCallback(async () => {
+    const blob = await stopAudioRecording();
+    
+    if (!blob) {
+      setState((prev) => ({ ...prev, status: "failed", error: "Failed to capture audio" }));
+      return;
+    }
+
+    setState((prev) => ({ ...prev, status: "processing" }));
+
+    // 4. Call without awaiting and pass the current jobId to handle stale responses
+    void processRecording(blob, state.jobId);
+  }, [stopAudioRecording, processRecording, state.jobId]);
+
+  const clearRecording = useCallback(() => {
+    setState({
+      jobId: null,
+      questionId,
+      status: "idle",
+      browserTranscript: "",
+      aiTranscript: "",
+      extractedValue: "",
+      error: null,
+    });
+  }, [questionId]);
+
+  return {
+    state,
+    isRecording,
+    startRecording,
+    stopRecording,
+    clearRecording,
+  };
+};

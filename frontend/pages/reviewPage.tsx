@@ -4,6 +4,9 @@ import { useInterviewStore } from "../state/interviewStore";
 import ReviewCard from "../components/review/reviewCard";
 import EditableReviewRow from "../components/review/editableRow";
 import { saveSession, submitFarmer } from "../services/sessionService";
+import voiceEngine from "../services/speech/tts";
+import { SpeechPriority } from "../types/speech";
+import { useLanguage } from "../hooks/useLanguage";
 
 export default function ReviewPage() {
   const { responses, questions, sessionId } = useInterviewStore((state) => ({
@@ -13,6 +16,7 @@ export default function ReviewPage() {
   }));
 
   const navigate = useNavigate();
+  const { language } = useLanguage();
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const handleRowSave = () => undefined;
@@ -60,6 +64,43 @@ export default function ReviewPage() {
     return questions.find(
       (question) => question.field === normalizedField
     );
+  };
+
+  const handleReadPage = async () => {
+    const items: { text: string; language: string }[] = [];
+
+    // Farmer
+    items.push({ text: `Name: ${responses?.farmer?.name ?? ""}`, language });
+    items.push({ text: `Age: ${responses?.farmer?.age ?? ""}`, language });
+    items.push({ text: `Gender: ${responses?.farmer?.gender ?? ""}`, language });
+    items.push({ text: `Mobile Number: ${responses?.farmer?.mobile_num ?? ""}`, language });
+    items.push({ text: `Village: ${responses?.farmer?.village ?? ""}`, language });
+    items.push({ text: `Pincode: ${responses?.farmer?.pincode ?? ""}`, language });
+
+    // Farm
+    items.push({ text: `Farm Name: ${responses?.farm?.name ?? ""}`, language });
+    items.push({ text: `Address: ${responses?.farm?.address ?? ""}`, language });
+    items.push({ text: `Total Area: ${responses?.farm?.Tarea ?? ""}`, language });
+    items.push({ text: `Used Area: ${responses?.farm?.Uarea ?? ""}`, language });
+    items.push({ text: `Farm Type: ${responses?.farm?.type ?? ""}`, language });
+    items.push({ text: `Water Source: ${responses?.farm?.watersrc ?? ""}`, language });
+    items.push({ text: `Block Count: ${responses?.farm?.blockCount ?? ""}`, language });
+
+    // Blocks
+    (responses?.blocks ?? []).forEach((block, idx) => {
+      items.push({ text: `Block ${idx + 1}:`, language });
+      items.push({ text: `Name: ${block?.name ?? ""}`, language });
+      items.push({ text: `Area: ${block?.area ?? ""}`, language });
+      items.push({ text: `Farming Type: ${block?.farmingType ?? ""}`, language });
+      items.push({ text: `Soil Type: ${block?.soil ?? ""}`, language });
+    });
+
+    if (!items.length) return;
+
+    await voiceEngine.playSequence({
+      priority: SpeechPriority.USER_ACTION,
+      items,
+    });
   };
 
   return (
@@ -251,15 +292,6 @@ export default function ReviewPage() {
       question={getQuestionForField(`block${index}.soil`)}
       onSave={handleRowSave}
     />
-
-    <EditableReviewRow
-      label="Water Source"
-      value={block?.watersrc ?? ""}
-      section="block"
-      field={`block${index}.watersrc`}
-      question={getQuestionForField(`block${index}.watersrc`)}
-      onSave={handleRowSave}
-    />
   </ReviewCard>
 ))}
 
@@ -287,6 +319,25 @@ export default function ReviewPage() {
             className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors sm:w-auto"
           >
             ← Back to Onboarding
+          </button>
+
+          <button
+            onClick={handleReadPage}
+            className="
+              mr-2
+              w-full
+              sm:w-auto
+              px-4
+              py-2
+              rounded-xl
+              bg-green-600
+              text-white
+              font-medium
+              hover:bg-green-700
+              transition
+            "
+          >
+            Read Page
           </button>
 
           <button

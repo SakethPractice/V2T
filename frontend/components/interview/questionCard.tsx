@@ -1,4 +1,5 @@
 import { useTranslation } from "../../hooks/useTranslation";
+import { VoiceJobStatus } from "../../hooks/useVoiceJob";
 import { Volume2 } from "lucide-react";
 
 type QuestionCardProps = {
@@ -7,6 +8,13 @@ type QuestionCardProps = {
   section: string;
   question: string;
   onRepeat?: () => void;
+  voiceStatus: VoiceJobStatus;
+  browserTranscript: string;
+  aiTranscript: string;
+  extractedValue: string;
+  onRecord: () => void;
+  onStop: () => void;
+  onClearRecording: () => void;
 };
 
 export default function QuestionCard({
