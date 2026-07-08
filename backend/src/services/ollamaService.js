@@ -10,6 +10,7 @@ export async function extractField(prompt) {
         model: AI_CONFIG.ollamaModel,
         prompt,
         stream: false,
+        think: false
       }
     );
 
