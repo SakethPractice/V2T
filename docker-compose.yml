@@ -1,45 +1,40 @@
 services:
-  python:
-    profiles: ["backend", "ui", "whisper"]
-    build:
-      context: ./backend/src/ai
-      dockerfile: Dockerfile
-    env_file:
-      - ./backend/src/ai/.env.prod
-    restart: unless-stopped
-    networks:
-      - app-network
+  # python:
+  #   build:
+  #     context: ./backend/src/ai
+  #     dockerfile: Dockerfile
+  #   env_file:
+  #     - ./backend/src/ai/.env.prod
+  #   restart: unless-stopped
+  #   networks:
+  #     - app-network
 
   node:
-    profiles: ["backend", "ui"]
     build:
       context: ./backend
       dockerfile: Dockerfile
     env_file:
       - ./backend/.env.prod
     restart: unless-stopped
-    depends_on:
-      - python
-    ports:
-      - "5000:5000"
+    # depends_on:
+    #   - python
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
       - app-network
 
   frontend:
-    profiles: ["ui"]
     build:
       context: ./frontend
       dockerfile: Dockerfile
     env_file:
-      - ./frontend/.env.prod
+      - ./frontend/.env
     restart: unless-stopped
     depends_on:
       node:
         condition: service_started
     ports:
-      - "5173:5173"
+      - "5173:80"
     networks:
       - app-network
 
