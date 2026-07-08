@@ -9,6 +9,7 @@ const en = {
     save: "Save",
     edit: "Edit",
     done: "Done",
+    readPage: "Read Page",
 
     progress: "Progress",
     completed: "Completed",
@@ -73,6 +74,8 @@ const en = {
     enterValue: "Enter a value",
     selectOption: "Select an option",
 
+    pressToAnswer: "Please press the mic button to answer.",
+
     farmerSection: "Farmer Details",
     farmSection: "Farm Details",
     blockSection: "Block Details",
@@ -129,6 +132,7 @@ const en = {
     blockDetails: "Block Details",
 
     submitting: "Submitting...",
+    backToQuestions: "Go Back to Questions",
 
     confirmSubmit:
       "Are you sure you want to submit your information?",
@@ -137,6 +141,29 @@ const en = {
 
     block: "Block",
     photo: "Photo",
+
+    fields: {
+      name: "Name",
+      age: "Age",
+      gender: "Gender",
+      mobile_num: "Mobile Number",
+      village: "Village",
+      pincode: "Pincode",
+      farmName: "Farm Name",
+      address: "Address",
+      tarea: "Total Area",
+      uarea: "Used Area",
+      farmType: "Farm Type",
+      waterSource: "Water Source",
+      blockCount: "Block Count",
+      blockName: "Block Name",
+      area: "Area",
+      farmingType: "Farming Type",
+      soilType: "Soil Type"
+    },
+
+    years: "years",
+    acres: "acres",
 
     validationError:
       "Please correct the highlighted fields before submitting.",

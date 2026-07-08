@@ -9,6 +9,7 @@ const hi = {
     save: "सहेजें",
     edit: "संपादित करें",
     done: "पूर्ण",
+    readPage: "पेज सुनें",
 
     progress: "प्रगति",
     completed: "पूर्ण",
@@ -75,6 +76,8 @@ const hi = {
     enterValue: "मान दर्ज करें",
     selectOption: "एक विकल्प चुनें",
 
+    pressToAnswer: "उत्तर देने के लिए कृपया माइक बटन दबाएँ।",
+
     farmerSection: "किसान विवरण",
     farmSection: "खेत का विवरण",
     blockSection: "ब्लॉक विवरण",
@@ -129,6 +132,7 @@ const hi = {
     farmerDetails: "किसान विवरण",
     farmDetails: "खेत का विवरण",
     blockDetails: "ब्लॉक विवरण",
+    backToQuestions: "प्रश्नों पर वापस जाएं",
 
     submitting: "सबमिट किया जा रहा है...",
 
@@ -138,6 +142,29 @@ const hi = {
 
     block: "ब्लॉक",
     photo: "फोटो",
+
+    fields: {
+    name: "नाम",
+    age: "आयु",
+    gender: "लिंग",
+    mobile_num: "मोबाइल नंबर",
+    village: "गाँव",
+    pincode: "पिन कोड",
+    farmName: "खेत का नाम",
+    address: "पता",
+    tarea: "कुल क्षेत्रफल",
+    uarea: "उपयोग किया गया क्षेत्रफल",
+    farmType: "खेत का प्रकार",
+    waterSource: "जल स्रोत",
+    blockCount: "ब्लॉक की संख्या",
+    blockName: "ब्लॉक का नाम",
+    area: "क्षेत्रफल",
+    farmingType: "खेती का प्रकार",
+    soilType: "मिट्टी का प्रकार"
+  },
+
+    "years": "वर्ष",
+    "acres": "एकड़",
 
     validationError: "सबमिट करने से पहले कृपया सभी त्रुटियों को ठीक करें।",
 

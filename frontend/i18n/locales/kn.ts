@@ -9,6 +9,7 @@ const kn = {
     save: "ಉಳಿಸಿ",
     edit: "ತಿದ್ದು",
     done: "ಮುಗಿದಿದೆ",
+    readPage: "ಪುಟವನ್ನು ಆಲಿಸಿ",
 
     progress: "ಪ್ರಗತಿ",
     completed: "ಪೂರ್ಣಗೊಂಡಿದೆ",
@@ -75,6 +76,8 @@ const kn = {
     enterValue: "ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ",
     selectOption: "ಒಂದು ಆಯ್ಕೆಯನ್ನು ಆರಿಸಿ",
 
+    pressToAnswer: "ಉತ್ತರಿಸಲು ದಯವಿಟ್ಟು ಮೈಕ್ ಬಟನ್ ಒತ್ತಿರಿ.",
+
     farmerSection: "ರೈತರ ವಿವರಗಳು",
     farmSection: "ಜಮೀನಿನ ವಿವರಗಳು",
     blockSection: "ಬ್ಲಾಕ್ ವಿವರಗಳು",
@@ -129,6 +132,7 @@ const kn = {
     farmerDetails: "ರೈತರ ವಿವರಗಳು",
     farmDetails: "ಜಮೀನಿನ ವಿವರಗಳು",
     blockDetails: "ಬ್ಲಾಕ್ ವಿವರಗಳು",
+    backToQuestions: "ಪ್ರಶ್ನೆಗಳಿಗೆ ಹಿಂತಿರುಗಿ",
 
     submitting: "ಸಲ್ಲಿಸಲಾಗುತ್ತಿದೆ...",
 
@@ -140,6 +144,29 @@ const kn = {
     block: "ಬ್ಲಾಕ್",
     photo: "ಫೋಟೋ",
 
+    fields: {
+    name: "ಹೆಸರು",
+    age: "ವಯಸ್ಸು",
+    gender: "ಲಿಂಗ",
+    mobile_num: "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+    village: "ಗ್ರಾಮ",
+    pincode: "ಅಂಚೆ ಕೋಡ್",
+    farmName: "ಕೃಷಿ ಭೂಮಿಯ ಹೆಸರು",
+    address: "ವಿಳಾಸ",
+    tarea: "ಒಟ್ಟು ಪ್ರದೇಶ",
+    uarea: "ಬಳಸಿದ ಪ್ರದೇಶ",
+    farmType: "ಕೃಷಿ ಭೂಮಿಯ ವಿಧ",
+    waterSource: "ನೀರಿನ ಮೂಲ",
+    blockCount: "ಬ್ಲಾಕ್‌ಗಳ ಸಂಖ್ಯೆ",
+    blockName: "ಬ್ಲಾಕ್ ಹೆಸರು",
+    area: "ಪ್ರದೇಶ",
+    farmingType: "ಕೃಷಿ ಪ್ರಕಾರ",
+    soilType: "ಮಣ್ಣಿನ ವಿಧ"
+  },
+
+    "years": "ವರ್ಷಗಳು",
+    "acres": "ಎಕರೆ",
+    
     validationError:
       "ಸಲ್ಲಿಸುವ ಮೊದಲು ದಯವಿಟ್ಟು ಎಲ್ಲಾ ದೋಷಗಳನ್ನು ಸರಿಪಡಿಸಿ.",
 

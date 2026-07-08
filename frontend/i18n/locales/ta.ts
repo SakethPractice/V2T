@@ -9,6 +9,7 @@ const ta = {
     save: "சேமிக்கவும்",
     edit: "திருத்தவும்",
     done: "முடிந்தது",
+    readPage: "பக்கத்தைக் கேளுங்கள்",
 
     progress: "முன்னேற்றம்",
     completed: "முடிந்தது",
@@ -75,6 +76,8 @@ const ta = {
     enterValue: "மதிப்பை உள்ளிடவும்",
     selectOption: "ஒரு விருப்பத்தைத் தேர்ந்தெடுக்கவும்",
 
+    pressToAnswer: "பதில் அளிக்க, தயவுசெய்து மைக் பொத்தானை அழுத்தவும்.",
+
     farmerSection: "விவசாயி விவரங்கள்",
     farmSection: "பண்ணை விவரங்கள்",
     blockSection: "பகுதி விவரங்கள்",
@@ -129,7 +132,7 @@ const ta = {
     farmerDetails: "விவசாயி விவரங்கள்",
     farmDetails: "பண்ணை விவரங்கள்",
     blockDetails: "பகுதி விவரங்கள்",
-
+    backToQuestions: "கேள்விகளுக்குத் திரும்பவும்",
     submitting: "சமர்ப்பிக்கப்படுகிறது...",
 
     confirmSubmit:
@@ -140,6 +143,29 @@ const ta = {
     block: "பகுதி",
     photo: "புகைப்படம்",
 
+    fields: {
+    name: "பெயர்",
+    age: "வயது",
+    gender: "பாலினம்",
+    mobile_num: "மொபைல் எண்",
+    village: "கிராமம்",
+    pincode: "அஞ்சல் குறியீடு",
+    farmName: "பண்ணை பெயர்",
+    address: "முகவரி",
+    tarea: "மொத்த பரப்பளவு",
+    uarea: "பயன்படுத்தப்பட்ட பரப்பளவு",
+    farmType: "பண்ணை வகை",
+    waterSource: "நீர் ஆதாரம்",
+    blockCount: "தொகுதிகளின் எண்ணிக்கை",
+    blockName: "தொகுதி பெயர்",
+    area: "பரப்பளவு",
+    farmingType: "விவசாய வகை",
+    soilType: "மண் வகை"
+  },
+
+    years: "ஆண்டுகள்",
+    acres: "ஏக்கர்",
+    
     validationError:
       "சமர்ப்பிப்பதற்கு முன் அனைத்து பிழைகளையும் சரிசெய்யவும்.",
 

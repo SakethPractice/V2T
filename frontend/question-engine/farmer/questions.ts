@@ -106,78 +106,27 @@ export const farmerQuestions: Question[] = [
             },
     ],
 },
-/*
+
+    
 {
-    id: "mobile_num",
-    section: "farmer",
-    field: "farmer.mobile_num",
-
-    question: {
-        en: "What is your mobile number?",
-        te: "మీ మొబైల్ నంబర్ ఏమిటి?",
-        hi: "आपका मोबाइल नंबर क्या है?",
-        kn: "ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಏನು?",
-        ta: "உங்கள் மொபைல் எண் என்ன?",
-        mr: "तुमचा मोबाईल क्रमांक काय आहे?",
-        gu: "તમારો મોબાઇલ નંબર શું છે?",
-    },
-
-    placeholder: {
-        en: "Enter your mobile number",
-        te: "మీ మొబైల్ నంబర్ నమోదు చేయండి",
-        hi: "अपना मोबाइल नंबर दर्ज करें",
-        kn: "ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
-        ta: "உங்கள் மொபைல் எண்ணை உள்ளிடவும்",
-        mr: "तुमचा मोबाईल क्रमांक प्रविष्ट करा",
-        gu: "તમારો મોબાઇલ નંબર દાખલ કરો",
-    },
-
-    type: "text",
-    minLength: 10,
-    maxLength: 10,
-    pattern: /^[6-9]\d{9}$/,
-},
-*/
-
-{
-    id: "village",
-    section: "farmer",
-    field: "farmer.village",
-
-    question: {
-        en: "Which village do you live in?",
-        te: "మీరు ఏ గ్రామంలో నివసిస్తున్నారు?",
-        hi: "आप किस गाँव में रहते हैं?",
-        kn: "ನೀವು ಯಾವ ಗ್ರಾಮದಲ್ಲಿ ವಾಸಿಸುತ್ತಿದ್ದೀರಿ?",
-        ta: "நீங்கள் எந்த கிராமத்தில் வசிக்கிறீர்கள்?",
-        mr: "तुम्ही कोणत्या गावात राहता?",
-        gu: "તમે કયા ગામમાં રહો છો?",
-    },
-
-    placeholder: {
-        en: "Enter your village name",
-        te: "మీ గ్రామం పేరును నమోదు చేయండి",
-        hi: "अपने गाँव का नाम दर्ज करें",
-        kn: "ನಿಮ್ಮ ಗ್ರಾಮದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
-        ta: "உங்கள் கிராமத்தின் பெயரை உள்ளிடவும்",
-        mr: "तुमच्या गावाचे नाव प्रविष्ट करा",
-        gu: "તમારા ગામનું નામ દાખલ કરો",
-    },
-
-    type: "text",
-},
-/*
-    {
         id: "pincode",
         section: "farmer",
         field: "farmer.pincode",
-        question: "What is your village pincode?",
+        question: {
+            en: "What is your village pincode?",
+            te: "మీ గ్రామం పిన్‌కోడ్ ఏమిటి?",
+            hi: "आपके गाँव का पिनकोड क्या है?",
+            kn: "ನಿಮ್ಮ ಗ್ರಾಮದ ಪಿನ್‌ಕೋಡ್ ಏನು?",
+            ta: "உங்கள் கிராமத்தின் அஞ்சல் குறியீடு என்ன?",
+            mr: "तुमच्या गावाचा पिनकोड काय आहे?",
+            gu: "તમારા ગામનો પિનકોડ શું છે?",
+        },
         type: "text",
         minLength : 6,
         maxLength : 6,
         pattern : /^[1-9][0-9]{5}$/,
-    },
-*/
+},
+
 
 {
     id: "farmer_photo",

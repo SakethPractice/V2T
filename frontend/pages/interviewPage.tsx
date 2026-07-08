@@ -1,13 +1,12 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Volume2, Mic, RotateCcw, Square } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { fetchPincode } from "../services/pincodeService";
+import { fetchLocationDetailsByPincode } from "../services/pincodeService";
 import { useInterviewStore } from "../state/interviewStore";
 import { useLanguage } from "../hooks/useLanguage";
 import { useTranslation } from "../hooks/useTranslation";
 import { useVoiceJob } from "../hooks/useVoiceJob";
-import { saveSession } from "../services/sessionService";
-import { getSession } from "../services/sessionService";
+import { saveSession,getSession } from "../services/sessionService";
 import { addBlockQuestions } from "../question-engine/engine/interviewEngine";
 import { hydrateInterviewSession } from "../utils/sessionHydration";
 import voiceEngine from "../services/speech/tts";
@@ -57,6 +56,9 @@ export default function InterviewPage() {
 
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const [isMicBlinking, setIsMicBlinking] = useState(false);
+  const nudgeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isPendingNudge, setIsPendingNudge] = useState(false);
   const currentQuestion = questions[currentQuestionIndex];
 
   const voiceJob = useVoiceJob({
@@ -212,26 +214,52 @@ export default function InterviewPage() {
   }, [voiceJob.state.status, voiceJob.state.extractedValue, currentQuestion, setAnswer]);
 
 useEffect(() => {
-  if (isHydrating || !currentQuestion) {
-    return;
-  }
+    if (isHydrating || !currentQuestion) {
+      return;
+    }
 
-  if (!autoReadEnabled) {
+    if (!autoReadEnabled) {
+      voiceEngine.stop();
+      return;
+    }
+
     voiceEngine.stop();
-    return;
-  }
+    setIsMicBlinking(false);
+    if (nudgeTimer.current) clearTimeout(nudgeTimer.current);
 
-  voiceEngine.stop();
+    // Play the sequence (question + options)
+    voiceEngine.playSequence({
+      priority: SpeechPriority.AUTO_QUESTION,
+      items: createQuestionSpeechItems(currentQuestion, language),
+    }).catch(console.error);
 
-  voiceEngine.playSequence({
-    priority: SpeechPriority.AUTO_QUESTION,
-    items: createQuestionSpeechItems(currentQuestion, language),
-  });
+    // Tell our new effect to start watching for the end of speech
+    setIsPendingNudge(true);
 
-  return () => {
-    voiceEngine.stop();
-  };
-}, [currentQuestion, language, isHydrating, autoReadEnabled]);
+    return () => {
+      voiceEngine.stop();
+      if (nudgeTimer.current) clearTimeout(nudgeTimer.current);
+    };
+  }, [currentQuestion, language, isHydrating, autoReadEnabled]);
+
+// Start timer ONLY after all speech (including options) has finished
+  useEffect(() => {
+    // Note: Change "idle" to whatever your app uses when TTS is not active 
+    // (e.g., "ready", "waiting", or checking !voiceEngine.isSpeaking)
+    if (isPendingNudge && voiceJob.state.status === "idle") {
+      
+      // Reset the flag so we don't start multiple timers
+      setIsPendingNudge(false); 
+
+      nudgeTimer.current = setTimeout(() => {
+        // Only nudge if they haven't started recording or typing
+        if (voiceJob.state.status !== "recording" && answer === "") {
+          setIsMicBlinking(true);
+          void voiceEngine.speak(t("interview.pressToAnswer"), language);
+        }
+      }, 45000);
+    }
+  }, [isPendingNudge, voiceJob.state.status, answer, language, t]);
  
   // Autosave: fires whenever responses or currentQuestionIndex change.
   // Debounced by 1000ms so rapid typing doesn't flood the API.
@@ -470,21 +498,30 @@ const handleNext = async () => {
     answer
   );
 
-  if (
-  currentQuestion.field ===
-  "farmer.village"
-) {
-  const pincode =
-    await fetchPincode(answer);
+if (
+    currentQuestion.field === "farmer.pincode" || 
+    currentQuestion.field === "farm.pincode"
+  ) {
+    const locationData = await fetchLocationDetailsByPincode(answer);
 
-  if (pincode) {
-    setAnswer(
-      "farmer",
-      "farmer.pincode",
-      pincode
-    );
+    if (locationData) {
+      const commonKeys = ["state", "district", "taluk", "village"] as const;
+
+      commonKeys.forEach((key) => {
+        setAnswer("farmer", `farmer.${key}`, locationData[key]);
+        setAnswer("farm", `farm.${key}`, locationData[key]);
+      });
+
+      setAnswer("farmer", "farmer.pincode", answer);
+      setAnswer("farm", "farm.pincode", answer);
+
+      setAnswer("farm", "farm.lat", locationData.lat);
+      setAnswer("farm", "farm.long", locationData.long);
+      setAnswer("farm","farm.village",locationData.village);
+      setAnswer("farmer","farmer.village",locationData.village);
+
+    }
   }
-}
 
 
   if (
@@ -614,10 +651,14 @@ const handleNext = async () => {
                   type="button"
                   onClick={voiceJob.startRecording}
                   disabled={voiceJob.state.status === "processing"}
-                  className="rounded-lg border p-2 hover:bg-blue-50 disabled:opacity-50"
+                  className={`rounded-lg border p-2 transition-colors ${
+                    isMicBlinking 
+                      ? "animate-border-blink bg-red-50 hover:bg-red-100 text-red-600" 
+                      : "hover:bg-blue-50 text-blue-600"
+                  } disabled:opacity-50`}
                   title="Start Recording"
                 >
-                  <Mic className="h-5 w-5 text-blue-600" />
+                  <Mic className={`h-5 w-5 ${isMicBlinking ? "text-red-600" : "text-blue-600"}`} />
                 </button>
               )}
 

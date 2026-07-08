@@ -9,6 +9,7 @@ const mr = {
     save: "जतन करा",
     edit: "संपादित करा",
     done: "पूर्ण झाले",
+    readPage: "पान ऐका",
 
     progress: "प्रगती",
     completed: "पूर्ण",
@@ -74,6 +75,8 @@ consentCheckbox:
     progressHint: "📝 पुढील टप्प्यावर जाण्यासाठी प्रत्येक विभागातील सर्व प्रश्नांची उत्तरे द्या.",
     enterValue: "मूल्य प्रविष्ट करा",
     selectOption: "एक पर्याय निवडा",
+    
+    pressToAnswer: "उत्तर देण्यासाठी कृपया मायक्रोफोन बटण दाबा.",
 
     farmerSection: "शेतकऱ्याची माहिती",
     farmSection: "शेतीची माहिती",
@@ -129,6 +132,7 @@ consentCheckbox:
     farmerDetails: "शेतकऱ्याची माहिती",
     farmDetails: "शेतीची माहिती",
     blockDetails: "ब्लॉकची माहिती",
+    backToQuestions: "प्रश्नांवर परत जा",
 
     submitting: "सबमिट केले जात आहे...",
 
@@ -139,6 +143,29 @@ consentCheckbox:
 
     block: "ब्लॉक",
     photo: "फोटो",
+
+    fields: {
+    name: "नाव",
+    age: "वय",
+    gender: "लिंग",
+    mobile_num: "मोबाईल क्रमांक",
+    village: "गाव",
+    pincode: "पिन कोड",
+    farmName: "शेताचे नाव",
+    address: "पत्ता",
+    tarea: "एकूण क्षेत्रफळ",
+    uarea: "वापरलेले क्षेत्रफळ",
+    farmType: "शेताचा प्रकार",
+    waterSource: "पाण्याचा स्रोत",
+    blockCount: "ब्लॉकची संख्या",
+    blockName: "ब्लॉकचे नाव",
+    area: "क्षेत्रफळ",
+    farmingType: "शेतीचा प्रकार",
+    soilType: "मातीचा प्रकार"
+  },
+
+    "years": "वर्षे",
+    "acres": "एकर",
 
     validationError:
       "सबमिट करण्यापूर्वी कृपया सर्व त्रुटी दुरुस्त करा.",

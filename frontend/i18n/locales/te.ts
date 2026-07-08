@@ -9,6 +9,7 @@ const te = {
     save: "భద్రపరచండి",
     edit: "సవరించండి",
     done: "పూర్తైంది",
+    readPage: "పేజీని వినండి",
 
     progress: "పురోగతి",
     completed: "పూర్తైంది",
@@ -75,6 +76,8 @@ const te = {
     enterValue: "విలువను నమోదు చేయండి",
     selectOption: "ఒక ఎంపికను ఎంచుకోండి",
 
+    pressToAnswer: "సమాధానం ఇవ్వడానికి దయచేసి మైక్ బటన్‌ను నొక్కండి.",
+
     farmerSection: "రైతు వివరాలు",
     farmSection: "పొలం వివరాలు",
     blockSection: "బ్లాక్ వివరాలు",
@@ -129,6 +132,7 @@ const te = {
     farmerDetails: "రైతు వివరాలు",
     farmDetails: "పొలం వివరాలు",
     blockDetails: "బ్లాక్ వివరాలు",
+    backToQuestions : "ప్రశ్నలకు తిరిగి వెళ్ళండి",
 
     submitting: "సమర్పిస్తోంది...",
 
@@ -139,6 +143,29 @@ const te = {
 
     block: "బ్లాక్",
     photo: "ఫోటో",
+
+    fields: {
+    name: "పేరు",
+    age: "వయస్సు",
+    gender: "లింగం",
+    mobile_num: "మొబైల్ నంబర్",
+    village: "గ్రామం",
+    pincode: "పిన్ కోడ్",
+    farmName: "వ్యవసాయ భూమి పేరు",
+    address: "చిరునామా",
+    tarea: "మొత్తం విస్తీర్ణం",
+    uarea: "ఉపయోగించిన విస్తీర్ణం",
+    farmType: "వ్యవసాయ భూమి రకం",
+    waterSource: "నీటి వనరు",
+    blockCount: "బ్లాక్‌ల సంఖ్య",
+    blockName: "బ్లాక్ పేరు",
+    area: "విస్తీర్ణం",
+    farmingType: "వ్యవసాయం రకం",
+    soilType: "నేల రకం"
+  },
+
+    "years": "సంవత్సరాలు",
+    "acres": "ఎకరాలు",
 
     validationError:
       "సమర్పించే ముందు దయచేసి అన్ని లోపాలను సరిచేయండి.",
