@@ -9,6 +9,7 @@ const gu = {
     save: "સાચવો",
     edit: "ફેરફાર કરો",
     done: "પૂર્ણ થયું",
+    readPage: "પેજ સાંભળો",
 
     progress: "પ્રગતિ",
     completed: "પૂર્ણ થયું",
@@ -131,6 +132,7 @@ consentCheckbox:
     farmerDetails: "ખેડૂતની માહિતી",
     farmDetails: "ખેતરની માહિતી",
     blockDetails: "બ્લોકની માહિતી",
+    backToQuestions: "પ્રશ્નો પર પાછા જાઓ",
 
     submitting: "સબમિટ થઈ રહ્યું છે...",
 
@@ -141,6 +143,29 @@ consentCheckbox:
 
     block: "બ્લોક",
     photo: "ફોટો",
+
+    fields: {
+    name: "નામ",
+    age: "ઉંમર",
+    gender: "લિંગ",
+    mobile_num: "મોબાઇલ નંબર",
+    village: "ગામ",
+    pincode: "પિન કોડ",
+    farmName: "ખેતરનું નામ",
+    address: "સરનામું",
+    tarea: "કુલ વિસ્તાર",
+    uarea: "ઉપયોગમાં લેવાયેલ વિસ્તાર",
+    farmType: "ખેતરનો પ્રકાર",
+    waterSource: "પાણીનો સ્ત્રોત",
+    blockCount: "બ્લોકની સંખ્યા",
+    blockName: "બ્લોકનું નામ",
+    area: "વિસ્તાર",
+    farmingType: "ખેતીનો પ્રકાર",
+    soilType: "માટીનો પ્રકાર"
+  },
+
+    "years": "વર્ષ",
+    "acres": "એકર",
 
     validationError:
       "સબમિટ કરતા પહેલાં કૃપા કરીને બધી ભૂલો સુધારો.",
