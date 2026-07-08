@@ -2,13 +2,16 @@ from fastapi import FastAPI, UploadFile, File, Form
 from faster_whisper import WhisperModel
 import tempfile
 import os
+import dotenv
+
+dotenv.load_dotenv()
 
 app = FastAPI()
 
 print("Loading Whisper model...")
 
 model = WhisperModel(
-    "medium",
+    os.environ.get("WHISPER_MODEL_PATH", "large-v3"),
     device="cuda",
     compute_type="float16"
 )
