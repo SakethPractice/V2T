@@ -3,3 +3,4 @@ python-multipart
 uvicorn
 faster-whisper
 edge-tts
+ctranlate2
