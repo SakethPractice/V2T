@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { LanguageCode } from "../types/language";
+import { SpeechRecognitionErrorEvent, SpeechRecognitionEvent } from "../types/speechRecognition";
 
 import {
   BrowserSpeechRecognition,

@@ -1,8 +1,8 @@
 import type { InterviewResponses } from "../types/response";
 import type { LanguageCode } from "../types/language";
 
-const API_URL = "http://localhost:5000/api/sessions";
-const FARMER_API_URL = "http://localhost:5000/api/farmers";
+const API_URL = import.meta.env.VITE_SESSION_URL;
+const FARMER_API_URL = import.meta.env.VITE_FARMER_API_URL;
 
 export async function startSession(phone: string) {
   const response = await fetch(`${API_URL}/start`, {

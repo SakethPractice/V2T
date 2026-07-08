@@ -42,7 +42,6 @@ function normalizeResponses(
       ...block,
       name: block?.name ?? "",
       farmingType: block?.farmingType ?? "",
-      watersrc: block?.watersrc ?? "",
       soil: block?.soil ?? "",
     })),
   };

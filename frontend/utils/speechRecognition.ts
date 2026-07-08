@@ -1,4 +1,5 @@
 import { LanguageCode } from "../types/language";
+import { SpeechRecognitionErrorEvent, SpeechRecognitionEvent } from "../types/speechRecognition";
 
 export interface BrowserSpeechRecognition extends EventTarget {
   lang: string;
