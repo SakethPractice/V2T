@@ -30,7 +30,7 @@ General Rules:
 - Do NOT return complete sentences.
 - Do NOT include field names.
 - Return ONLY the extracted value.
-- If no value can be extracted, return exactly:
+- For free form answer questions if no value can be extracted, return exactly:
 TO_BE_FILLED
 
 Normalization Rules:
@@ -41,10 +41,11 @@ For Age:
 - Round to the nearest whole year.
 - Return only the number.
 - Do NOT include units or extra words.
-Examples:
-"32 years" → 32
-"31.7 years" → 32
-"36 months" → 3
+
+
+For Gender:
+- The options available are Male,Female,Other
+- If its not Male or Female, just return "Other"
 
 For Area Fields (farm Tarea, farm Uarea, block area):
 - ALWAYS return the value in ACRES.
