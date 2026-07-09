@@ -148,16 +148,23 @@ export const useVoiceJob = ({ questionId, language, targetField }: UseVoiceJobOp
 }, [isRecording, stopRecording]);
 
   const clearRecording = useCallback(() => {
-    setState({
-      jobId: null,
-      questionId,
-      status: "idle",
-      browserTranscript: "",
-      aiTranscript: "",
-      extractedValue: "",
-      error: null,
-    });
-  }, [questionId]);
+  if (timerRef.current) {
+    clearTimeout(timerRef.current);
+    timerRef.current = null;
+  }
+
+  void stopAudioRecording().catch(() => {});
+
+  setState({
+    jobId: null,
+    questionId,
+    status: "idle",
+    browserTranscript: "",
+    aiTranscript: "",
+    extractedValue: "",
+    error: null,
+  });
+}, [questionId, stopAudioRecording]);
 
   return {
     state,
