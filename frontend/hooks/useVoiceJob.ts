@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useAudioRecording } from './useAudioRecording';
 import { LanguageCode } from '../types/language';
 import { uploadAudioForExtraction } from "../services/speech/sttApi";
@@ -43,6 +43,9 @@ export const useVoiceJob = ({ questionId, language, targetField }: UseVoiceJobOp
     stopRecording: stopAudioRecording, 
     transcript 
   } = useAudioRecording(language);
+
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const AUTO_STOP_TIMEOUT = 20_000; // 20 seconds
 
   useEffect(() => {
     setState((prev) => {
@@ -105,6 +108,11 @@ export const useVoiceJob = ({ questionId, language, targetField }: UseVoiceJobOp
   }, [language, targetField]);
 
   const stopRecording = useCallback(async () => {
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
     const blob = await stopAudioRecording();
     
     if (!blob) {
@@ -117,6 +125,27 @@ export const useVoiceJob = ({ questionId, language, targetField }: UseVoiceJobOp
     // 4. Call without awaiting and pass the current jobId to handle stale responses
     void processRecording(blob, state.jobId);
   }, [stopAudioRecording, processRecording, state.jobId]);
+
+  useEffect(() => {
+  if (!isRecording) {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    return;
+  }
+
+  timerRef.current = setTimeout(() => {
+    void stopRecording();
+  }, AUTO_STOP_TIMEOUT);
+
+  return () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+}, [isRecording, stopRecording]);
 
   const clearRecording = useCallback(() => {
     setState({
