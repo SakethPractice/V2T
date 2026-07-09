@@ -106,11 +106,7 @@ export default function EditableReviewRow({
             />
           ) : (
             <input
-              type={
-                question?.type === "number"
-                  ? "number"
-                  : "text"
-              }
+              type={"text"}
               value={editValue}
               onChange={(e) =>
                 handleInputChange(e.target.value)

@@ -198,13 +198,27 @@ export default function InterviewPage() {
       // BUG FIX #3: For options questions, try to match the extracted value to an available option
       if (currentQuestion.options && currentQuestion.options.length > 0) {
         const extracted = finalValue.toLowerCase().trim();
-        const matchedOption = currentQuestion.options.find((opt) => {
-          const optText = (typeof opt === 'string' ? opt : opt.en ?? opt).toLowerCase();
-          return optText.includes(extracted) || extracted.includes(optText);
+        let matchedOption = currentQuestion.options.find((opt) => {
+        const optText = (
+          typeof opt === "string"
+            ? opt
+            : opt.en ?? opt
+        ).toLowerCase().trim();
+
+        return optText === extracted;
+      });
+
+      if (!matchedOption) {
+        matchedOption = currentQuestion.options.find((opt) => {
+          const optText = (
+            typeof opt === "string"
+              ? opt
+              : opt.en ?? opt
+          ).toLowerCase().trim();
+
+          return extracted.includes(optText);
         });
-        if (matchedOption) {
-          finalValue = typeof matchedOption === 'string' ? matchedOption : matchedOption.en ?? matchedOption;
-        }
+      }
       }
 
       setAnswerValue(finalValue);
@@ -431,7 +445,7 @@ useEffect(() => {
     return (
       <input
         key={currentQuestion.id}
-        type={isNumberQuestion ? "number" : "text"}
+        type={"text"}
         value={currentAnswer}
         onChange={handleTextChange}
         placeholder={
@@ -666,34 +680,35 @@ if (
                 type="button"
                 onClick={() => {
                   voiceJob.clearRecording();
-                  voiceJob.startRecording();
                 }}
                 disabled={voiceJob.state.status === "recording"}
                 className="rounded-lg border p-2 hover:bg-gray-100 disabled:opacity-50"
-                title="Re-record"
+                title="Clear recording"
               >
                 <RotateCcw className="h-5 w-5" />
               </button>
 
               <button
-                type="button"
-                onClick={() => {
-                  // toggle: stop if speaking, otherwise speak the current answer
-                  if (voiceEngine.isSpeaking()) {
-                    voiceEngine.stop();
-                    return;
-                  }
+                  type="button"
+                  onClick={() => {
+                    if (voiceEngine.isSpeaking()) {
+                      voiceEngine.stop();
+                      return;
+                    }
 
-                  const textToSpeak = currentAnswer ||
-                    (currentQuestion.question[language] ?? currentQuestion.question.en);
+                    const textToSpeak =
+                      currentAnswer ||
+                      (currentQuestion.question[language] ??
+                        currentQuestion.question.en);
 
-                  if (!textToSpeak) return;
+                    if (!textToSpeak) return;
 
-                  void voiceEngine.speak(String(textToSpeak), language);
-                }}
-                className="rounded-lg border p-2 hover:bg-gray-100"
-                title="Listen"
-              >
+                    void voiceEngine.speak(String(textToSpeak), language);
+                  }}
+                  disabled={!currentAnswer.trim()}
+                  className="rounded-lg border p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Listen"
+                >
                 <Volume2 className="h-5 w-5" />
               </button>
 

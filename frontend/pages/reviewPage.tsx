@@ -70,6 +70,9 @@ export default function ReviewPage() {
     return questions.find((question) => question.field === normalizedField);
   };
 
+  const speakDigits = (value: string | number) =>
+  String(value).split("").join(" ");
+
   // The Sequential Auto-Read Logic
   const handleReadPage = async () => {
     // Utility to add pauses between sections for natural reading and smooth scrolling
@@ -95,7 +98,7 @@ export default function ReviewPage() {
       if (hasValue(f.gender)) farmerItems.push({ text: `${t("review.fields.gender")} ${f.gender}`, language });
       if (hasValue(f.mobile_num)) farmerItems.push({ text: `${t("review.fields.mobile_num")} ${f.mobile_num}`, language });
       if (hasValue(f.village)) farmerItems.push({ text: `${t("review.fields.village")} ${f.village}`, language });
-      if (hasValue(f.pincode)) farmerItems.push({ text: `${t("review.fields.pincode")} ${f.pincode}`, language });
+      if (hasValue(f.pincode)) farmerItems.push({ text: `${t("review.fields.pincode")} ${speakDigits(f.pincode)}`, language });
     }
 
     if (farmerItems.length > 0 && farmerRef.current) {
