@@ -256,6 +256,19 @@ useEffect(() => {
     };
   }, [currentQuestion, language, isHydrating, autoReadEnabled]);
 
+  useEffect(() => {
+  if (answer.trim()) {
+    setIsMicBlinking(false);
+
+    if (nudgeTimer.current) {
+      clearTimeout(nudgeTimer.current);
+      nudgeTimer.current = null;
+    }
+
+    setIsPendingNudge(false);
+  }
+}, [answer]);
+
 // Start timer ONLY after all speech (including options) has finished
   useEffect(() => {
     // Note: Change "idle" to whatever your app uses when TTS is not active 
@@ -663,7 +676,17 @@ if (
               ) : (
                 <button
                   type="button"
-                  onClick={voiceJob.startRecording}
+                  onClick={async () => {
+                    voiceEngine.stop();
+                    setIsMicBlinking(false);
+
+                    if (nudgeTimer.current) {
+                      clearTimeout(nudgeTimer.current);
+                      nudgeTimer.current = null;
+                    }
+
+                    await voiceJob.startRecording();
+                  }}
                   disabled={voiceJob.state.status === "processing"}
                   className={`rounded-lg border p-2 transition-colors ${
                     isMicBlinking 
@@ -679,7 +702,23 @@ if (
               <button
                 type="button"
                 onClick={() => {
+                  voiceEngine.stop();
+
+                  if (nudgeTimer.current) {
+                    clearTimeout(nudgeTimer.current);
+                    nudgeTimer.current = null;
+                  }
+
+                  setIsPendingNudge(false);
+                  setIsMicBlinking(true);
+
+                  setAnswerValue("");
                   voiceJob.clearRecording();
+
+                  void voiceEngine.speak(
+                    t("interview.pressToAnswer"),
+                    language
+                  );
                 }}
                 disabled={voiceJob.state.status === "recording"}
                 className="rounded-lg border p-2 hover:bg-gray-100 disabled:opacity-50"
