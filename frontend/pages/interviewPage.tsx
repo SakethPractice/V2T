@@ -735,12 +735,20 @@ if (
                       return;
                     }
 
-                    const textToSpeak =
+                    let textToSpeak =
                       currentAnswer ||
                       (currentQuestion.question[language] ??
                         currentQuestion.question.en);
 
                     if (!textToSpeak) return;
+
+                    // Force TTS to read digit-by-digit for phone numbers and pincodes
+                  if (
+                    currentAnswer && 
+                    (currentQuestion.field.includes("pincode") || currentQuestion.field.includes("mobile_num"))
+                  ) {
+                    textToSpeak = textToSpeak.split('').join(' ');
+                  }
 
                     void voiceEngine.speak(String(textToSpeak), language);
                   }}
@@ -775,6 +783,7 @@ if (
             <button
               onClick={() => {
                 voiceEngine.stop();
+                setError("");
                 previousQuestion();
               }}
               disabled={currentQuestionIndex === 0}
@@ -793,6 +802,7 @@ if (
             <button
               onClick={() => {
                 voiceEngine.stop();
+                setError("");
                 handleNext();
               }}
               className="
