@@ -9,6 +9,14 @@ export function validateAnswer(
       ? answer.trim()
       : answer;
 
+  if (
+    normalizedAnswer === "" ||
+    normalizedAnswer === null ||
+    normalizedAnswer === undefined
+  ) {
+    return null;
+  }
+
   if (question.type === "number") {
 
     const value = Number(normalizedAnswer);
@@ -53,6 +61,24 @@ export function validateAnswer(
       !question.pattern.test(normalizedAnswer)
     ) {
       return "Invalid format";
+    }
+  }
+
+  if (question.type === "select") {
+    const isValidOption = question.options?.some((option) => {
+      if (typeof option === "string") {
+        return normalizedAnswer === option;
+      }
+
+      if (typeof normalizedAnswer === "string") {
+        return Object.values(option).includes(normalizedAnswer);
+      }
+
+      return false;
+    });
+
+    if (!isValidOption) {
+      return "Please select a valid option";
     }
   }
 

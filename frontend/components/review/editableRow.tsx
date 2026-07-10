@@ -80,12 +80,10 @@ export default function EditableReviewRow({
   };
 
   const handleCancel = () => {
-    setEditValue(
-      value?.toString() ?? ""
-    );
-
-    setIsEditing(false);
-  };
+  setEditValue(value?.toString() ?? "");
+  setError("");
+  setIsEditing(false);
+};
 
   return (
     <div className="grid grid-cols-3 gap-4 items-center py-4 border-b border-slate-100">
@@ -176,7 +174,10 @@ export default function EditableReviewRow({
 
           {editable ? (
             <button
-              onClick={() => setIsEditing(true)}
+              onClick={() => {
+                    setError("");
+                    setIsEditing(true);
+                }}
               className="
                 flex
                 justify-end
