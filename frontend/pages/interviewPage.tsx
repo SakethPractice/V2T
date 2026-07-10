@@ -271,12 +271,23 @@ useEffect(() => {
 
 // Start timer ONLY after all speech (including options) has finished
   useEffect(() => {
-    // Note: Change "idle" to whatever your app uses when TTS is not active 
+    // Note: Change "idle" to whatever your app uses when TTS is not active
     // (e.g., "ready", "waiting", or checking !voiceEngine.isSpeaking)
     if (isPendingNudge && voiceJob.state.status === "idle") {
-      
+
       // Reset the flag so we don't start multiple timers
-      setIsPendingNudge(false); 
+      setIsPendingNudge(false);
+
+      // Use different idle durations depending on question type:
+      // - select questions: 40s
+      // - other questions: 30s
+      const idleTimeout =
+        currentQuestion?.type === "select" ? 40000 : 30000;
+
+      if (nudgeTimer.current) {
+        clearTimeout(nudgeTimer.current);
+        nudgeTimer.current = null;
+      }
 
       nudgeTimer.current = setTimeout(() => {
         // Only nudge if they haven't started recording or typing
@@ -284,9 +295,9 @@ useEffect(() => {
           setIsMicBlinking(true);
           void voiceEngine.speak(t("interview.pressToAnswer"), language);
         }
-      }, 45000);
+      }, idleTimeout);
     }
-  }, [isPendingNudge, voiceJob.state.status, answer, language, t]);
+  }, [isPendingNudge, voiceJob.state.status, answer, language, t, currentQuestion?.type]);
  
   // Autosave: fires whenever responses or currentQuestionIndex change.
   // Debounced by 1000ms so rapid typing doesn't flood the API.
@@ -355,6 +366,15 @@ useEffect(() => {
 
     voiceEngine.stop();
 
+    // Ensure the idle nudge flow starts after the repeated question (and options)
+    // have finished playing so the idle timer begins at the correct time.
+    if (nudgeTimer.current) {
+      clearTimeout(nudgeTimer.current);
+      nudgeTimer.current = null;
+    }
+    setIsMicBlinking(false);
+    setIsPendingNudge(true);
+
     voiceEngine.playSequence({
       priority: SpeechPriority.USER_ACTION,
       items: createQuestionSpeechItems(currentQuestion, language),
@@ -365,6 +385,15 @@ useEffect(() => {
     if (!currentQuestion?.options?.length || isSpeechBusy) {
       return;
     }
+
+    // Start the pending nudge flow so the idle timer will begin
+    // after the options have finished being read (20s for select questions).
+    if (nudgeTimer.current) {
+      clearTimeout(nudgeTimer.current);
+      nudgeTimer.current = null;
+    }
+    setIsMicBlinking(false);
+    setIsPendingNudge(true);
 
     void voiceEngine.playSequence({
       priority: SpeechPriority.USER_ACTION,
@@ -741,6 +770,15 @@ if (
                         currentQuestion.question.en);
 
                     if (!textToSpeak) return;
+
+                    // Start pending nudge so the idle timer will begin after
+                    // this manual TTS playback completes (matches repeat/read behavior).
+                    if (nudgeTimer.current) {
+                      clearTimeout(nudgeTimer.current);
+                      nudgeTimer.current = null;
+                    }
+                    setIsMicBlinking(false);
+                    setIsPendingNudge(true);
 
                     // Force TTS to read digit-by-digit for phone numbers and pincodes
                   if (
