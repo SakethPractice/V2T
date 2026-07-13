@@ -4,14 +4,7 @@ import { extractField } from "../services/ollamaService.js";
 
 export async function processAudioAnswer(req, res) {
   try {
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "Audio file is required.",
-      });
-    }
-
-    const { language, targetField } = req.body;
+    const { language, targetField, browserTranscript } = req.body;
 
     if (!language || !targetField) {
       return res.status(400).json({
@@ -20,19 +13,48 @@ export async function processAudioAnswer(req, res) {
       });
     }
 
-    // Step 1: Whisper
-    const { transcript, language: detectedLanguage } =
-      await transcribeAudio(
-        req.file.buffer,
-        req.file.originalname,
-        language
-      );
+    if (!req.file && !browserTranscript) {
+      return res.status(400).json({
+        success: false,
+        message: "Either audio or browserTranscript is required.",
+      });
+    }
 
-    // Step 2: Prompt
-    const prompt = createFieldExtractionPrompt(
-      targetField,
-      transcript
-    );
+    const fallbackTranscript =
+      typeof browserTranscript === "string"
+        ? browserTranscript.trim()
+        : "";
+
+    let transcript = "";
+    let detectedLanguage = language;
+    let fallbackUsed = false;
+
+    if (req.file) {
+      try {
+        const whisperResult = await transcribeAudio(
+          req.file.buffer,
+          req.file.originalname,
+          language
+        );
+
+        transcript = whisperResult.transcript?.trim() || "";
+        detectedLanguage = whisperResult.language || language;
+      } catch (whisperError) {
+        if (fallbackTranscript) {
+          transcript = fallbackTranscript;
+          fallbackUsed = true;
+        } else {
+          throw whisperError;
+        }
+      }
+    }
+
+    if (!transcript && fallbackTranscript) {
+      transcript = fallbackTranscript;
+      fallbackUsed = true;
+    }
+
+    const prompt = createFieldExtractionPrompt(targetField, transcript);
 
     // Step 3: Gemma
     const value = await extractField(prompt);
@@ -43,6 +65,7 @@ export async function processAudioAnswer(req, res) {
       value,
       language: detectedLanguage,
       field: targetField,
+      fallbackUsed,
     });
   } catch (error) {
     console.error("STT Controller Error:", error);

@@ -33,6 +33,7 @@ async def transcribe(
         segments, info = model.transcribe(
             temp_path,
             language=language,
+            task="transcribe",
             beam_size=1
         )
 

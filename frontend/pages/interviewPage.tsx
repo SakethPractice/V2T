@@ -47,7 +47,7 @@ export default function InterviewPage() {
   } = useInterviewStore();
 
   const [answer, setAnswerValue] = useState("");
-
+  const [showInactivityOverlay, setShowInactivityOverlay] = useState(false);
   const [error, setError] = useState("");
   const [isHydrating, setIsHydrating] = useState(true);
   const [isSpeechBusy, setIsSpeechBusy] = useState(
@@ -155,6 +155,40 @@ export default function InterviewPage() {
     };
   }, [goToQuestion, questions.length, sessionId, setQuestions]);
 
+  // 60-Second Inactivity Tracker
+  useEffect(() => {
+    let inactivityTimer: ReturnType<typeof setTimeout>;
+
+    const resetTimer = () => {
+      // If the overlay is already up, ignore background activity until they click it
+      if (showInactivityOverlay) return;
+
+      clearTimeout(inactivityTimer);
+      
+      inactivityTimer = setTimeout(() => {
+        // Only show the overlay if they aren't actively recording an answer
+        if (voiceJob.state.status !== "recording") {
+          setShowInactivityOverlay(true);
+        }
+      }, 60000); // 60 seconds
+    };
+
+    // The events that signify the user is active
+    const activeEvents = ["mousedown", "mousemove", "keydown", "scroll", "touchstart"];
+    
+    // Attach listeners
+    activeEvents.forEach((event) => document.addEventListener(event, resetTimer));
+
+    // Start the initial timer
+    resetTimer();
+
+    // Cleanup on unmount
+    return () => {
+      clearTimeout(inactivityTimer);
+      activeEvents.forEach((event) => document.removeEventListener(event, resetTimer));
+    };
+  }, [showInactivityOverlay, voiceJob.state.status]);
+
   useEffect(() => {
     // BUG FIX #1: Clear voice job state when moving to next question
     // Prevents extracted value from previous question leaking to current question
@@ -198,27 +232,50 @@ export default function InterviewPage() {
       // BUG FIX #3: For options questions, try to match the extracted value to an available option
       if (currentQuestion.options && currentQuestion.options.length > 0) {
         const extracted = finalValue.toLowerCase().trim();
-        let matchedOption = currentQuestion.options.find((opt) => {
+        // Helper array to match spoken words to numbers (up to 10 options is usually plenty)
+        const numberWords = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+        let matchedOption = currentQuestion.options.find((opt,index) => {
         const optText = (
           typeof opt === "string"
             ? opt
             : opt.en ?? opt
         ).toLowerCase().trim();
 
-        return optText === extracted;
-      });
+      // 1. IVR Match: Check if the user said the option number ("1" or "one")
+          const optionNumber = (index + 1).toString();
+          const optionWord = numberWords[index + 1] || "";
+          
+          if (extracted === optionNumber || extracted === optionWord) {
+            return true;
+          }
 
-      if (!matchedOption) {
-        matchedOption = currentQuestion.options.find((opt) => {
-          const optText = (
-            typeof opt === "string"
-              ? opt
-              : opt.en ?? opt
-          ).toLowerCase().trim();
+          // 2. Exact Match
+          if (extracted === optText) {
+            return true;
+          }
 
-          return extracted.includes(optText);
+          // 3. Partial Match (with word boundaries to prevent "female" matching "male")
+          try {
+            // Is the full option text inside the spoken sentence?
+            const isOptionInSpeech = new RegExp(`\\b${optText}\\b`, 'i').test(extracted);
+            
+            // Is the spoken text inside the option? 
+            // (e.g. User says "Male", Option is "1. Male")
+            const isSpeechInOption = new RegExp(`\\b${extracted}\\b`, 'i').test(optText);
+
+            return isOptionInSpeech || isSpeechInOption;
+          } catch (e) {
+            // Fallback for weird characters that break Regex
+            return optText.includes(extracted) || extracted.includes(optText);
+          }
         });
-      }
+
+        // IMPORTANT: Update finalValue so we save the actual option string, not "1"
+        if (matchedOption) {
+          finalValue = typeof matchedOption === "string" 
+            ? matchedOption 
+            : matchedOption.en ?? matchedOption;
+        }
       }
 
       setAnswerValue(finalValue);
@@ -271,12 +328,23 @@ useEffect(() => {
 
 // Start timer ONLY after all speech (including options) has finished
   useEffect(() => {
-    // Note: Change "idle" to whatever your app uses when TTS is not active 
+    // Note: Change "idle" to whatever your app uses when TTS is not active
     // (e.g., "ready", "waiting", or checking !voiceEngine.isSpeaking)
     if (isPendingNudge && voiceJob.state.status === "idle") {
-      
+
       // Reset the flag so we don't start multiple timers
-      setIsPendingNudge(false); 
+      setIsPendingNudge(false);
+
+      // Use different idle durations depending on question type:
+      // - select questions: 40s
+      // - other questions: 30s
+      const idleTimeout =
+        currentQuestion?.type === "select" ? 40000 : 30000;
+
+      if (nudgeTimer.current) {
+        clearTimeout(nudgeTimer.current);
+        nudgeTimer.current = null;
+      }
 
       nudgeTimer.current = setTimeout(() => {
         // Only nudge if they haven't started recording or typing
@@ -284,9 +352,9 @@ useEffect(() => {
           setIsMicBlinking(true);
           void voiceEngine.speak(t("interview.pressToAnswer"), language);
         }
-      }, 45000);
+      }, idleTimeout);
     }
-  }, [isPendingNudge, voiceJob.state.status, answer, language, t]);
+  }, [isPendingNudge, voiceJob.state.status, answer, language, t, currentQuestion?.type]);
  
   // Autosave: fires whenever responses or currentQuestionIndex change.
   // Debounced by 1000ms so rapid typing doesn't flood the API.
@@ -355,6 +423,15 @@ useEffect(() => {
 
     voiceEngine.stop();
 
+    // Ensure the idle nudge flow starts after the repeated question (and options)
+    // have finished playing so the idle timer begins at the correct time.
+    if (nudgeTimer.current) {
+      clearTimeout(nudgeTimer.current);
+      nudgeTimer.current = null;
+    }
+    setIsMicBlinking(false);
+    setIsPendingNudge(true);
+
     voiceEngine.playSequence({
       priority: SpeechPriority.USER_ACTION,
       items: createQuestionSpeechItems(currentQuestion, language),
@@ -366,6 +443,15 @@ useEffect(() => {
       return;
     }
 
+    // Start the pending nudge flow so the idle timer will begin
+    // after the options have finished being read (20s for select questions).
+    if (nudgeTimer.current) {
+      clearTimeout(nudgeTimer.current);
+      nudgeTimer.current = null;
+    }
+    setIsMicBlinking(false);
+    setIsPendingNudge(true);
+
     void voiceEngine.playSequence({
       priority: SpeechPriority.USER_ACTION,
       items: createQuestionOptionSpeechItems(
@@ -373,6 +459,13 @@ useEffect(() => {
         language
       ),
     });
+  };
+
+  const handleInactivityClick = () => {
+    // 1. Hide the translucent overlay
+    setShowInactivityOverlay(false);
+    
+    handleRepeatQuestion();
   };
 
   const handleImageChange = (
@@ -735,12 +828,29 @@ if (
                       return;
                     }
 
-                    const textToSpeak =
+                    let textToSpeak =
                       currentAnswer ||
                       (currentQuestion.question[language] ??
                         currentQuestion.question.en);
 
                     if (!textToSpeak) return;
+
+                    // Start pending nudge so the idle timer will begin after
+                    // this manual TTS playback completes (matches repeat/read behavior).
+                    if (nudgeTimer.current) {
+                      clearTimeout(nudgeTimer.current);
+                      nudgeTimer.current = null;
+                    }
+                    setIsMicBlinking(false);
+                    setIsPendingNudge(true);
+
+                    // Force TTS to read digit-by-digit for phone numbers and pincodes
+                  if (
+                    currentAnswer && 
+                    (currentQuestion.field.includes("pincode") || currentQuestion.field.includes("mobile_num"))
+                  ) {
+                    textToSpeak = textToSpeak.split('').join(' ');
+                  }
 
                     void voiceEngine.speak(String(textToSpeak), language);
                   }}
@@ -775,6 +885,7 @@ if (
             <button
               onClick={() => {
                 voiceEngine.stop();
+                setError("");
                 previousQuestion();
               }}
               disabled={currentQuestionIndex === 0}
@@ -793,6 +904,7 @@ if (
             <button
               onClick={() => {
                 voiceEngine.stop();
+                setError("");
                 handleNext();
               }}
               className="
@@ -852,6 +964,17 @@ if (
       <div className="hidden md:block">
         <ProgressSidebar />
       </div>
-    </div>
-  );
-};
+      {/* 60-Second Inactivity Overlay */}
+      {showInactivityOverlay && (
+        <div 
+          onClick={handleInactivityClick}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity cursor-pointer"
+          title="Tap to resume and read question"
+        >
+          <div className="bg-white/80 p-10 rounded-full shadow-2xl animate-pulse">
+            <Mic className="h-24 w-24 text-blue-600" />
+          </div>
+        </div>
+      )};
+  </div>
+)};

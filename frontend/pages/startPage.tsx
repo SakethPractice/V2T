@@ -63,6 +63,11 @@ export default function StartPage() {
  return (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
     <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
+      <img
+        src={"/logo.png"}
+        alt="Farmitopia"
+        className="h-22 w-auto mb-6"
+      />
       <h1 className="text-2xl font-bold text-center mb-2">
         Farmer Onboarding
       </h1>
