@@ -76,55 +76,84 @@ export const useVoiceJob = ({ questionId, language, targetField }: UseVoiceJobOp
   }, [startAudioRecording]);
 
   // 2. Implement processRecording(blob) with try/catch and stale checks
-  const processRecording = useCallback(async (blob: Blob, currentJobId: string | null) => {
+  const processRecording = useCallback(async (
+    blob: Blob,
+    browserTranscript: string,
+    currentJobId: string | null
+  ) => {
     try {
-      // Assuming processSpeech takes an object. Adjust parameters as needed for your specific sttApi implementation.
-      const response = await uploadAudioForExtraction({ audioBlob: blob, language, targetField });
-      
+      let response;
+
+      try {
+        response = await uploadAudioForExtraction({
+          audioBlob: blob,
+          browserTranscript,
+          language,
+          targetField,
+        });
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message === "STT request timed out" &&
+          browserTranscript
+        ) {
+          response = await uploadAudioForExtraction({
+            browserTranscript,
+            language,
+            targetField,
+          });
+        } else {
+          throw error;
+        }
+      }
+
       setState((prev) => {
-        // 5. Ignore stale responses
         if (prev.jobId !== currentJobId) return prev;
-        
+
         return {
           ...prev,
           status: "completed",
           aiTranscript: response.transcript,
-          extractedValue: response.value, // Mapping the returned 'value' to 'extractedValue'
+          extractedValue: response.value,
         };
       });
     } catch (error) {
       setState((prev) => {
-        // 5. Ignore stale responses even on errors
         if (prev.jobId !== currentJobId) return prev;
-        
+
         return {
           ...prev,
           status: "failed",
-          // 3. Extract error message safely
-          error: error instanceof Error ? error.message : "An unknown processing error occurred",
+          error:
+            error instanceof Error
+              ? error.message
+              : "An unknown processing error occurred",
         };
       });
     }
   }, [language, targetField]);
 
   const stopRecording = useCallback(async () => {
-
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
+
     const blob = await stopAudioRecording();
-    
+
     if (!blob) {
-      setState((prev) => ({ ...prev, status: "failed", error: "Failed to capture audio" }));
+      setState((prev) => ({
+        ...prev,
+        status: "failed",
+        error: "Failed to capture audio",
+      }));
       return;
     }
 
     setState((prev) => ({ ...prev, status: "processing" }));
 
-    // 4. Call without awaiting and pass the current jobId to handle stale responses
-    void processRecording(blob, state.jobId);
-  }, [stopAudioRecording, processRecording, state.jobId]);
+    void processRecording(blob, state.browserTranscript, state.jobId);
+  }, [stopAudioRecording, processRecording, state.browserTranscript, state.jobId]);
 
   useEffect(() => {
   if (!isRecording) {
