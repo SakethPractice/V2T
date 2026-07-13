@@ -198,27 +198,50 @@ export default function InterviewPage() {
       // BUG FIX #3: For options questions, try to match the extracted value to an available option
       if (currentQuestion.options && currentQuestion.options.length > 0) {
         const extracted = finalValue.toLowerCase().trim();
-        let matchedOption = currentQuestion.options.find((opt) => {
+        // Helper array to match spoken words to numbers (up to 10 options is usually plenty)
+        const numberWords = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+        let matchedOption = currentQuestion.options.find((opt,index) => {
         const optText = (
           typeof opt === "string"
             ? opt
             : opt.en ?? opt
         ).toLowerCase().trim();
 
-        return optText === extracted;
-      });
+      // 1. IVR Match: Check if the user said the option number ("1" or "one")
+          const optionNumber = (index + 1).toString();
+          const optionWord = numberWords[index + 1] || "";
+          
+          if (extracted === optionNumber || extracted === optionWord) {
+            return true;
+          }
 
-      if (!matchedOption) {
-        matchedOption = currentQuestion.options.find((opt) => {
-          const optText = (
-            typeof opt === "string"
-              ? opt
-              : opt.en ?? opt
-          ).toLowerCase().trim();
+          // 2. Exact Match
+          if (extracted === optText) {
+            return true;
+          }
 
-          return extracted.includes(optText);
+          // 3. Partial Match (with word boundaries to prevent "female" matching "male")
+          try {
+            // Is the full option text inside the spoken sentence?
+            const isOptionInSpeech = new RegExp(`\\b${optText}\\b`, 'i').test(extracted);
+            
+            // Is the spoken text inside the option? 
+            // (e.g. User says "Male", Option is "1. Male")
+            const isSpeechInOption = new RegExp(`\\b${extracted}\\b`, 'i').test(optText);
+
+            return isOptionInSpeech || isSpeechInOption;
+          } catch (e) {
+            // Fallback for weird characters that break Regex
+            return optText.includes(extracted) || extracted.includes(optText);
+          }
         });
-      }
+
+        // IMPORTANT: Update finalValue so we save the actual option string, not "1"
+        if (matchedOption) {
+          finalValue = typeof matchedOption === "string" 
+            ? matchedOption 
+            : matchedOption.en ?? matchedOption;
+        }
       }
 
       setAnswerValue(finalValue);

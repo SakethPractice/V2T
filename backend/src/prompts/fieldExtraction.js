@@ -45,11 +45,11 @@ Round to nearest year.
 `,
 
     "farmer.gender": `
-Allowed values
+Allowed values are either the value or the option number
 
-Male
-Female
-Other
+1.Male
+2.Female
+3.Other
 
 Anything except Male or Female becomes Other.
 
@@ -172,12 +172,12 @@ return empty.
 "farm.type": `
 Choose ONE value.
 
-Allowed values
+Allowed values are either the value or the option number
 
-Non-Chemical
-Integrated
-Mixed
-Regenerative Farming
+1.Integrated
+2.Non-Chemical
+3.Mixed
+4.Regenerative Farming
 
 Return only one value.
 
@@ -187,14 +187,14 @@ No other output is allowed.
 "farm.watersrc":`
 Choose ONE value.
 
-Allowed values
+Allowed values are either the value or the option number
 
-Borewell
-Open well
-Canal
-River
-Pond
-Rainwater
+1.Borewell
+2.Open well
+3.Canal
+4.River
+5.Pond
+6.Rainwater
 
 Return only one value.
 
@@ -204,15 +204,15 @@ No other output is allowed.
 "block.soil":`
 Choose ONE value.
 
-Allowed values
+Allowed values are either the value or the option number
 
-Black
-Loamy
-Sandy
-Sandyloamy
-Red
-Laterite
-Alluvial
+1.Black
+2.Loamy
+3.Sandy
+4.Sandyloamy
+5.Red
+6.Laterite
+7.Alluvial
 
 Return only one value.
 
@@ -222,10 +222,10 @@ No other output is allowed.
 "block.farmingType":`
 Choose ONE value.
 
-Allowed values
+Allowed values are either the value or the option number
 
-Integrated
-Non-Chemical
+1.Integrated
+2.Non-Chemical
 
 Return only one value.
 
@@ -256,24 +256,53 @@ If unavailable
 return empty.
 `;
 
-export function buildFieldExtractionPrompt(fieldName, transcript,) {
+const DEFAULT_CHOICE_RULE = `
+This is a multiple-choice/dropdown field.
+- If the user speaks a number or index (e.g., "four", "4", "option 2"), return ONLY that number as a simple digit (e.g., "4", "2").
+- If they speak the option value directly, return that closest matching value.
+- NEVER return TO_BE_FILLED if the user clearly spoke a number; always extract the digit.
+- Return only one value. No other output is allowed.
+`;
 
-    const NUMBER_FIELDS = new Set([
-  "farmer.age",
-  "farmer.pincode",
-  "farm.Tarea",
-  "farm.Uarea",
-  "farm.blockCount",
-  "block.area",
-]);
+export function buildFieldExtractionPrompt(fieldName, transcript) {
+  // Normalize array-based field names (e.g., "blocks[0].farmingType" -> "block.farmingType")
+  const baseFieldName = fieldName.replace(/^blocks\[\d+\]\./, 'block.');
+  const NUMBER_FIELDS = new Set([
+    "farmer.age",
+    "farmer.pincode",
+    "farm.Tarea",
+    "farm.Uarea",
+    "farm.blockCount",
+    "block.area",
+  ]);
 
-const rules =
-  FIELD_RULES[fieldName] ??
-  (NUMBER_FIELDS.has(fieldName)
-    ? DEFAULT_NUMBER_RULE
-    : DEFAULT_TEXT_RULE);
+  const CHOICE_FIELDS = new Set([
+    "farmer.gender",
+    "farm.type",
+    "farm.watersrc",
+    "block.soil",
+    "block.farmingType",
+  ]);
 
-    return `
+  let rules = "";
+
+  // Strategy: Determine base rules, then append IVR logic if it's a choice field
+  if (FIELD_RULES[fieldName]) {
+    rules = FIELD_RULES[fieldName];
+    // Automatically inject IVR handling for all specified choice fields
+    if (CHOICE_FIELDS.has(fieldName)) {
+      rules += `\n\n${DEFAULT_CHOICE_RULE}`;
+    }
+  } else if (NUMBER_FIELDS.has(fieldName)) {
+    rules = DEFAULT_NUMBER_RULE;
+  } else if (CHOICE_FIELDS.has(fieldName)) {
+    // Catch-all for new choice fields not explicitly listed in FIELD_RULES
+    rules = DEFAULT_CHOICE_RULE;
+  } else {
+    rules = DEFAULT_TEXT_RULE;
+  }
+
+  return `
 ${COMMON_PROMPT}
 
 Field
@@ -289,5 +318,4 @@ Transcript
 ${transcript}
 """
 `.trim();
-
 }
