@@ -47,7 +47,7 @@ export default function InterviewPage() {
   } = useInterviewStore();
 
   const [answer, setAnswerValue] = useState("");
-
+  const [showInactivityOverlay, setShowInactivityOverlay] = useState(false);
   const [error, setError] = useState("");
   const [isHydrating, setIsHydrating] = useState(true);
   const [isSpeechBusy, setIsSpeechBusy] = useState(
@@ -154,6 +154,40 @@ export default function InterviewPage() {
       cancelled = true;
     };
   }, [goToQuestion, questions.length, sessionId, setQuestions]);
+
+  // 60-Second Inactivity Tracker
+  useEffect(() => {
+    let inactivityTimer: ReturnType<typeof setTimeout>;
+
+    const resetTimer = () => {
+      // If the overlay is already up, ignore background activity until they click it
+      if (showInactivityOverlay) return;
+
+      clearTimeout(inactivityTimer);
+      
+      inactivityTimer = setTimeout(() => {
+        // Only show the overlay if they aren't actively recording an answer
+        if (voiceJob.state.status !== "recording") {
+          setShowInactivityOverlay(true);
+        }
+      }, 60000); // 60 seconds
+    };
+
+    // The events that signify the user is active
+    const activeEvents = ["mousedown", "mousemove", "keydown", "scroll", "touchstart"];
+    
+    // Attach listeners
+    activeEvents.forEach((event) => document.addEventListener(event, resetTimer));
+
+    // Start the initial timer
+    resetTimer();
+
+    // Cleanup on unmount
+    return () => {
+      clearTimeout(inactivityTimer);
+      activeEvents.forEach((event) => document.removeEventListener(event, resetTimer));
+    };
+  }, [showInactivityOverlay, voiceJob.state.status]);
 
   useEffect(() => {
     // BUG FIX #1: Clear voice job state when moving to next question
@@ -425,6 +459,13 @@ useEffect(() => {
         language
       ),
     });
+  };
+
+  const handleInactivityClick = () => {
+    // 1. Hide the translucent overlay
+    setShowInactivityOverlay(false);
+    
+    handleRepeatQuestion();
   };
 
   const handleImageChange = (
@@ -923,6 +964,17 @@ if (
       <div className="hidden md:block">
         <ProgressSidebar />
       </div>
-    </div>
-  );
-};
+      {/* 60-Second Inactivity Overlay */}
+      {showInactivityOverlay && (
+        <div 
+          onClick={handleInactivityClick}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity cursor-pointer"
+          title="Tap to resume and read question"
+        >
+          <div className="bg-white/80 p-10 rounded-full shadow-2xl animate-pulse">
+            <Mic className="h-24 w-24 text-blue-600" />
+          </div>
+        </div>
+      )};
+  </div>
+)};
